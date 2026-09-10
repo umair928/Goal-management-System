@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f6f6f4; }
+  * { box-sizing: border-box; }
+  a { color: #101211; text-decoration: underline; text-underline-offset: 2px; }
+  a:hover { color: oklch(0.52 0.11 155); }
+  input, button, select, textarea { font: inherit; color: inherit; }
+  input:focus, textarea:focus { outline: 2px solid oklch(0.62 0.13 155); outline-offset: -1px; }
+  ::placeholder { color: #a3a6a3; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #101211; background: #f6f6f4; min-height: 100vh; -webkit-font-smoothing: antialiased;">
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height: 100vh; display: grid; place-items: center; padding: 40px 24px; background-color: #f1f1ee; background-image: linear-gradient(#e4e4e0 1px, transparent 1px), linear-gradient(90deg, #e4e4e0 1px, transparent 1px); background-size: 28px 28px;">
+    <div style="width: 100%; max-width: 396px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 28px;">
+        <div style="width: 26px; height: 26px; background: #101211; display: grid; place-items: center;">
+          <div style="width: 9px; height: 9px; background: oklch(0.72 0.16 155);"></div>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500;">Quarterly Goals</div>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #dededa; padding: 32px;">
+        <div style="font-size: 20px; letter-spacing: -0.01em; margin-bottom: 6px;">Sign in</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b6f6d; letter-spacing: 0.04em; margin-bottom: 26px;">Q3 2026 cycle · internal access only</div>
+
+        <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 7px;">Email</label>
+        <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="you@company.com" style="width: 100%; padding: 11px 12px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 14px; margin-bottom: 18px; border-radius: 0;" />
+
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px;">
+          <label style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d;">Password</label>
+          <a href="#" style="font-size: 11px; text-decoration: none; color: #6b6f6d;">Forgot?</a>
+        </div>
+        <input type="password" value="{{ password }}" onChange="{{ onPassword }}" placeholder="••••••••" style="width: 100%; padding: 11px 12px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 14px; margin-bottom: 22px; border-radius: 0;" />
+
+        <button onClick="{{ signIn }}" style="width: 100%; padding: 12px; background: #101211; color: #f6f6f4; border: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;" style-hover="background: oklch(0.32 0.06 155);">Sign in</button>
+
+        <div style="margin-top: 20px; padding-top: 18px; border-top: 1px solid #ececea; display: flex; justify-content: center;">
+          <button onClick="{{ signIn }}" style="background: none; border: none; font-size: 12px; color: #6b6f6d; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;">Continue with company SSO</button>
+        </div>
+      </div>
+
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #9a9d9a; margin-top: 18px; letter-spacing: 0.04em;">Your role and visibility are set by your account.</div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+  <div style="display: grid; grid-template-columns: 226px minmax(0, 1fr); min-height: 100vh;">
+
+    <aside style="border-right: 1px solid #e2e2df; background: #fbfbfa; padding: 22px 16px; display: flex; flex-direction: column; gap: 26px; position: sticky; top: 0; height: 100vh;">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <div style="width: 22px; height: 22px; background: #101211; display: grid; place-items: center;">
+          <div style="width: 8px; height: 8px; background: oklch(0.72 0.16 155);"></div>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;">Quarterly Goals</div>
+      </div>
+
+      <nav style="display: flex; flex-direction: column; gap: 2px;">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="5">
+          <button onClick="{{ item.go }}" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border: none; background: {{ item.bg }}; color: {{ item.fg }}; font-size: 13px; text-align: left; cursor: pointer; width: 100%;" style-hover="background: #efefec;">
+            <span>{{ item.label }}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: {{ item.badgeFg }};">{{ item.badge }}</span>
+          </button>
+        </sc-for>
+      </nav>
+
+      <button onClick="{{ goCreate }}" style="padding: 10px; background: #101211; color: #f6f6f4; border: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: oklch(0.32 0.06 155);">+ New objective</button>
+
+      <div style="margin-top: auto; border-top: 1px solid #e8e8e5; padding-top: 16px; display: flex; align-items: center; gap: 10px;">
+        <div style="width: 28px; height: 28px; background: #e4e4e0; display: grid; place-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px;">PA</div>
+        <div style="min-width: 0;">
+          <div style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Priya Anand</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6f6d;">Manager · Product</div>
+        </div>
+      </div>
+      <button onClick="{{ signOut }}" style="background: none; border: none; font-size: 11px; color: #9a9d9a; cursor: pointer; text-align: left; padding: 0;">Sign out</button>
+    </aside>
+
+    <main style="min-width: 0;">
+      <header style="display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 32px; border-bottom: 1px solid #e2e2df; background: #f6f6f4; position: sticky; top: 0; z-index: 5;">
+        <div style="display: flex; align-items: baseline; gap: 14px; min-width: 0;">
+          <h1 style="font-size: 17px; font-weight: 500; margin: 0; letter-spacing: -0.01em;">{{ pageTitle }}</h1>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b6f6d; letter-spacing: 0.04em;">{{ pageMeta }}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 10px; border: 1px solid #dededa; background: #ffffff; letter-spacing: 0.06em;">{{ quarter }}</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 10px; background: #ececea; letter-spacing: 0.06em; color: #6b6f6d;">{{ daysLeft }} days left</div>
+        </div>
+      </header>
+
+      <div style="padding: 28px 32px 64px;">
+
+        <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+          <div style="display: grid; gap: 24px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 1px; background: #e2e2df; border: 1px solid #e2e2df;">
+              <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+                <div style="background: #ffffff; padding: 18px 18px 16px; flex: 1 1 180px; min-width: 0;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d;">{{ s.label }}</div>
+                  <div style="font-size: 30px; letter-spacing: -0.02em; margin-top: 10px; color: {{ s.color }};">{{ s.value }}</div>
+                  <div style="font-size: 12px; color: #6b6f6d; margin-top: 4px;">{{ s.sub }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: start;">
+              <section style="flex: 5 1 380px; min-width: 0; background: #ffffff; border: 1px solid #e2e2df;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid #ececea;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">Your objectives</div>
+                  <button onClick="{{ goGoals }}" style="background: none; border: none; font-size: 12px; color: #6b6f6d; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;">View all</button>
+                </div>
+                <sc-for list="{{ myGoals }}" as="g" hint-placeholder-count="3">
+                  <div onClick="{{ g.open }}" style="display: grid; grid-template-columns: minmax(0, 1fr) 110px 64px; gap: 14px; align-items: center; padding: 16px 18px; border-bottom: 1px solid #f0f0ee; cursor: pointer;" style-hover="background: #fafaf8;">
+                    <div style="min-width: 0;">
+                      <div style="font-size: 14px; margin-bottom: 5px;">{{ g.title }}</div>
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6f6d; letter-spacing: 0.04em;">{{ g.krSummary }}</div>
+                    </div>
+                    <div>
+                      <sc-if value="{{ vizBar }}" hint-placeholder-val="{{ true }}">
+                        <div style="height: 6px; background: #ececea;">
+                          <div style="height: 6px; width: {{ g.pctWidth }}; background: {{ g.color }};"></div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ vizSegments }}" hint-placeholder-val="{{ false }}">
+                        <div style="display: flex; gap: 3px;">
+                          <sc-for list="{{ g.segments }}" as="seg" hint-placeholder-count="10">
+                            <div style="height: 12px; flex: 1; background: {{ seg.bg }};"></div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ vizDial }}" hint-placeholder-val="{{ false }}">
+                        <div style="display: flex; justify-content: flex-start;">
+                          <div style="width: 34px; height: 34px; border-radius: 50%; background: {{ g.dial }}; display: grid; place-items: center;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: #ffffff;"></div>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="text-align: right;">
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">{{ g.pctLabel }}</div>
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: {{ g.color }};">{{ g.statusLabel }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </section>
+
+              <div style="flex: 2 1 260px; min-width: 0; display: grid; gap: 24px;">
+                <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 18px;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px;">Check-in due</div>
+                  <div style="font-size: 13px; color: #6b6f6d; line-height: 1.5; margin-bottom: 14px;">Weekly check-ins close Friday 17:00. Two of your key results have not been updated in 9 days.</div>
+                  <button onClick="{{ openCheckinFirst }}" style="width: 100%; padding: 10px; background: #101211; color: #f6f6f4; border: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: oklch(0.32 0.06 155);">Start check-in</button>
+                </section>
+
+                <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 18px;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px;">Quarter pacing</div>
+                  <div style="display: flex; align-items: flex-end; gap: 4px; height: 74px;">
+                    <sc-for list="{{ pacing }}" as="w" hint-placeholder-count="13">
+                      <div title="{{ w.label }}" style="flex: 1; height: {{ w.h }}; background: {{ w.bg }};"></div>
+                    </sc-for>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #9a9d9a; margin-top: 8px; letter-spacing: 0.06em;">
+                    <span>W1</span><span>W13</span>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isGoals }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; gap: 16px;">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+              <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search objectives…" style="flex: 1; min-width: 200px; padding: 9px 12px; border: 1px solid #dededa; background: #ffffff; font-size: 13px; border-radius: 0;" />
+              <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+                <button onClick="{{ f.go }}" style="padding: 9px 13px; border: 1px solid {{ f.border }}; background: {{ f.bg }}; color: {{ f.fg }}; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; cursor: pointer;">{{ f.label }}</button>
+              </sc-for>
+              <button onClick="{{ toggleSort }}" style="padding: 9px 13px; border: 1px solid #dededa; background: #ffffff; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; cursor: pointer;">Sort: {{ sort }}</button>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e2e2df;">
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) 130px 150px 100px; gap: 18px; padding: 11px 18px; border-bottom: 1px solid #e2e2df; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d;">
+                <div>Objective</div><div>Owner</div><div>Progress</div><div style="text-align: right;">Status</div>
+              </div>
+              <sc-for list="{{ listGoals }}" as="g" hint-placeholder-count="6">
+                <div onClick="{{ g.open }}" style="display: grid; grid-template-columns: minmax(0, 1fr) 130px 150px 100px; gap: 18px; align-items: center; padding: 15px 18px; border-bottom: 1px solid #f0f0ee; cursor: pointer;" style-hover="background: #fafaf8;">
+                  <div style="min-width: 0;">
+                    <div style="font-size: 14px; margin-bottom: 4px;">{{ g.title }}</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6f6d; letter-spacing: 0.04em;">{{ g.team }} · {{ g.krSummary }}</div>
+                  </div>
+                  <div style="font-size: 12px; color: #6b6f6d;">{{ g.owner }}</div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <sc-if value="{{ vizBar }}" hint-placeholder-val="{{ true }}">
+                      <div style="flex: 1; height: 6px; background: #ececea;">
+                        <div style="height: 6px; width: {{ g.pctWidth }}; background: {{ g.color }};"></div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ vizSegments }}" hint-placeholder-val="{{ false }}">
+                      <div style="flex: 1; display: flex; gap: 3px;">
+                        <sc-for list="{{ g.segments }}" as="seg" hint-placeholder-count="10">
+                          <div style="height: 12px; flex: 1; background: {{ seg.bg }};"></div>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ vizDial }}" hint-placeholder-val="{{ false }}">
+                      <div style="width: 30px; height: 30px; border-radius: 50%; background: {{ g.dial }}; display: grid; place-items: center;">
+                        <div style="width: 21px; height: 21px; border-radius: 50%; background: #ffffff;"></div>
+                      </div>
+                    </sc-if>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 34px; text-align: right;">{{ g.pctLabel }}</div>
+                  </div>
+                  <div style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: {{ g.color }};">{{ g.statusLabel }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; gap: 22px; max-width: 1080px;">
+            <button onClick="{{ goGoals }}" style="justify-self: start; background: none; border: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b6f6d; cursor: pointer; padding: 0; letter-spacing: 0.06em;">← All objectives</button>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: start;">
+              <div style="flex: 5 1 380px; min-width: 0; display: grid; gap: 20px;">
+                <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 24px;">
+                  <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;">
+                    <div>
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: {{ detail.color }};">{{ detail.statusLabel }} · {{ detail.team }}</div>
+                      <h2 style="font-size: 24px; font-weight: 500; letter-spacing: -0.02em; margin: 10px 0 0;">{{ detail.title }}</h2>
+                      <div style="font-size: 13px; color: #6b6f6d; margin-top: 8px; line-height: 1.55; max-width: 56ch;">{{ detail.description }}</div>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0;">
+                      <div style="font-size: 34px; letter-spacing: -0.02em;">{{ detail.pctLabel }}</div>
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6f6d;">of target</div>
+                    </div>
+                  </div>
+                  <div style="height: 6px; background: #ececea; margin-top: 20px;">
+                    <div style="height: 6px; width: {{ detail.pctWidth }}; background: {{ detail.color }};"></div>
+                  </div>
+                </section>
+
+                <section style="background: #ffffff; border: 1px solid #e2e2df;">
+                  <div style="padding: 14px 20px; border-bottom: 1px solid #ececea; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">Key results</div>
+                  <sc-for list="{{ detail.krs }}" as="kr" hint-placeholder-count="3">
+                    <div style="padding: 18px 20px; border-bottom: 1px solid #f0f0ee; display: grid; grid-template-columns: minmax(0, 1fr) minmax(96px, 140px); gap: 16px; align-items: center;">
+                      <div>
+                        <div style="font-size: 14px; margin-bottom: 6px;">{{ kr.name }}</div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b6f6d; letter-spacing: 0.04em;">{{ kr.readout }}</div>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <sc-if value="{{ vizBar }}" hint-placeholder-val="{{ true }}">
+                          <div style="flex: 1; height: 6px; background: #ececea;">
+                            <div style="height: 6px; width: {{ kr.pctWidth }}; background: {{ kr.color }};"></div>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ vizSegments }}" hint-placeholder-val="{{ false }}">
+                          <div style="flex: 1; display: flex; gap: 3px;">
+                            <sc-for list="{{ kr.segments }}" as="seg" hint-placeholder-count="10">
+                              <div style="height: 12px; flex: 1; background: {{ seg.bg }};"></div>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ vizDial }}" hint-placeholder-val="{{ false }}">
+                          <div style="width: 30px; height: 30px; border-radius: 50%; background: {{ kr.dial }}; display: grid; place-items: center;">
+                            <div style="width: 21px; height: 21px; border-radius: 50%; background: #ffffff;"></div>
+                          </div>
+                        </sc-if>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; width: 36px; text-align: right;">{{ kr.pctLabel }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </section>
+
+                <section style="background: #ffffff; border: 1px solid #e2e2df;">
+                  <div style="padding: 14px 20px; border-bottom: 1px solid #ececea; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">Check-in history</div>
+                  <sc-for list="{{ detail.history }}" as="h" hint-placeholder-count="4">
+                    <div style="padding: 16px 20px; border-bottom: 1px solid #f0f0ee; display: grid; grid-template-columns: 88px minmax(0, 1fr) 70px; gap: 16px;">
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b6f6d;">{{ h.date }}</div>
+                      <div style="font-size: 13px; line-height: 1.5; color: #353937;">{{ h.note }}</div>
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: right; color: {{ h.color }};">{{ h.delta }}</div>
+                    </div>
+                  </sc-for>
+                </section>
+              </div>
+
+              <div style="flex: 2 1 260px; min-width: 0; display: grid; gap: 20px;">
+                <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 18px;">
+                  <button onClick="{{ openCheckinDetail }}" style="width: 100%; padding: 11px; background: #101211; color: #f6f6f4; border: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: oklch(0.32 0.06 155);">Check in</button>
+                  <div style="display: grid; gap: 12px; margin-top: 18px;">
+                    <sc-for list="{{ detail.meta }}" as="m" hint-placeholder-count="4">
+                      <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 12px;">
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #6b6f6d;">{{ m.k }}</span>
+                        <span style="text-align: right;">{{ m.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </section>
+
+                <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 18px;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px;">Aligned to</div>
+                  <div style="border-left: 2px solid oklch(0.72 0.16 155); padding-left: 12px;">
+                    <div style="font-size: 13px; line-height: 1.5;">{{ detail.parent }}</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6f6d; margin-top: 5px;">Company · CEO</div>
+                  </div>
+                  <button onClick="{{ goTree }}" style="margin-top: 14px; background: none; border: none; padding: 0; font-size: 12px; color: #6b6f6d; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;">See alignment tree</button>
+                </section>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCreate }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 720px; display: grid; gap: 20px;">
+            <div style="display: flex; gap: 1px; background: #e2e2df; border: 1px solid #e2e2df;">
+              <sc-for list="{{ steps }}" as="st" hint-placeholder-count="3">
+                <div style="flex: 1; background: {{ st.bg }}; color: {{ st.fg }}; padding: 12px 14px;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;">{{ st.num }}</div>
+                  <div style="font-size: 12px; margin-top: 4px;">{{ st.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e2e2df; padding: 26px;">
+              <sc-if value="{{ step1 }}" hint-placeholder-val="{{ true }}">
+                <div style="display: grid; gap: 18px;">
+                  <div>
+                    <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 7px;">Objective</label>
+                    <input value="{{ form.title }}" onChange="{{ onFormTitle }}" placeholder="What should be true by the end of Q3?" style="width: 100%; padding: 11px 12px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 14px; border-radius: 0;" />
+                  </div>
+                  <div>
+                    <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 7px;">Why it matters</label>
+                    <textarea value="{{ form.why }}" onChange="{{ onFormWhy }}" rows="3" placeholder="One or two sentences of context for reviewers." style="width: 100%; padding: 11px 12px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 14px; border-radius: 0; resize: vertical; font-family: inherit;"></textarea>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                      <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 7px;">Level</label>
+                      <div style="display: flex; gap: 1px; background: #e2e2df; border: 1px solid #e2e2df;">
+                        <sc-for list="{{ levels }}" as="lv" hint-placeholder-count="3">
+                          <button onClick="{{ lv.go }}" style="flex: 1; padding: 9px; border: none; background: {{ lv.bg }}; color: {{ lv.fg }}; font-size: 12px; cursor: pointer;">{{ lv.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div>
+                      <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 7px;">Aligns to</label>
+                      <input value="{{ form.parent }}" onChange="{{ onFormParent }}" style="width: 100%; padding: 9px 12px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 13px; border-radius: 0;" />
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ step2 }}" hint-placeholder-val="{{ false }}">
+                <div style="display: grid; gap: 14px;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d;">Key results</div>
+                  <sc-for list="{{ form.krs }}" as="k" hint-placeholder-count="3">
+                    <div style="display: grid; grid-template-columns: minmax(0, 1fr) 84px 84px 30px; gap: 10px; align-items: center;">
+                      <input value="{{ k.name }}" onChange="{{ k.onName }}" placeholder="Measure" style="padding: 10px 12px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 13px; border-radius: 0;" />
+                      <input value="{{ k.start }}" onChange="{{ k.onStart }}" placeholder="Start" style="padding: 10px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 13px; border-radius: 0; font-family: 'JetBrains Mono', monospace;" />
+                      <input value="{{ k.target }}" onChange="{{ k.onTarget }}" placeholder="Target" style="padding: 10px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 13px; border-radius: 0; font-family: 'JetBrains Mono', monospace;" />
+                      <button onClick="{{ k.remove }}" style="border: none; background: none; color: #9a9d9a; cursor: pointer; font-size: 15px;">×</button>
+                    </div>
+                  </sc-for>
+                  <button onClick="{{ addKr }}" style="justify-self: start; padding: 8px 12px; border: 1px dashed #cfcfca; background: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; color: #6b6f6d;">+ Add key result</button>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ step3 }}" hint-placeholder-val="{{ false }}">
+                <div style="display: grid; gap: 16px;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d;">Review</div>
+                  <div style="border: 1px solid #ececea; padding: 18px; background: #fbfbfa;">
+                    <div style="font-size: 17px; margin-bottom: 8px;">{{ reviewTitle }}</div>
+                    <div style="font-size: 13px; color: #6b6f6d; line-height: 1.5;">{{ reviewWhy }}</div>
+                    <div style="display: grid; gap: 8px; margin-top: 16px;">
+                      <sc-for list="{{ reviewKrs }}" as="rk" hint-placeholder-count="3">
+                        <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px; border-top: 1px solid #ececea; padding-top: 8px;">
+                          <span>{{ rk.name }}</span>
+                          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6b6f6d;">{{ rk.range }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="font-size: 12px; color: #6b6f6d;">Submitting sends this to {{ form.parent }} for approval. You can keep editing until it is approved.</div>
+                </div>
+              </sc-if>
+
+              <div style="display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; padding-top: 20px; border-top: 1px solid #ececea;">
+                <button onClick="{{ prevStep }}" style="padding: 10px 16px; border: 1px solid #dededa; background: #ffffff; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">Back</button>
+                <button onClick="{{ nextStep }}" style="padding: 10px 20px; background: #101211; color: #f6f6f4; border: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: oklch(0.32 0.06 155);">{{ nextLabel }}</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isTree }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; gap: 18px;">
+            <div style="background: #ffffff; border: 1px solid #e2e2df; padding: 22px 24px;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d;">Company objective</div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 20px; margin-top: 10px;">
+                <div style="font-size: 20px; letter-spacing: -0.01em;">Become the default planning tool for mid-market teams</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px;">61%</div>
+              </div>
+            </div>
+            <sc-for list="{{ tree }}" as="node" hint-placeholder-count="4">
+              <div style="background: #ffffff; border: 1px solid #e2e2df;">
+                <div style="display: grid; grid-template-columns: minmax(0, 1fr) 200px 80px; gap: 20px; align-items: center; padding: 16px 22px; border-left: 3px solid {{ node.color }};">
+                  <div>
+                    <div style="font-size: 15px;">{{ node.title }}</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6f6d; margin-top: 5px; letter-spacing: 0.04em;">{{ node.team }} · {{ node.owner }}</div>
+                  </div>
+                  <div style="height: 6px; background: #ececea;">
+                    <div style="height: 6px; width: {{ node.pctWidth }}; background: {{ node.color }};"></div>
+                  </div>
+                  <div style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 13px;">{{ node.pctLabel }}</div>
+                </div>
+                <sc-for list="{{ node.children }}" as="child" hint-placeholder-count="2">
+                  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 200px 80px; gap: 20px; align-items: center; padding: 13px 22px 13px 52px; border-top: 1px solid #f0f0ee; background: #fbfbfa;">
+                    <div>
+                      <div style="font-size: 13px;">{{ child.title }}</div>
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6f6d; margin-top: 4px;">{{ child.owner }}</div>
+                    </div>
+                    <div style="height: 4px; background: #ececea;">
+                      <div style="height: 4px; width: {{ child.pctWidth }}; background: {{ child.color }};"></div>
+                    </div>
+                    <div style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6b6f6d;">{{ child.pctLabel }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; gap: 24px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
+              <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 20px;">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px;">Status distribution</div>
+                <div style="display: grid; gap: 12px;">
+                  <sc-for list="{{ distribution }}" as="d" hint-placeholder-count="3">
+                    <div>
+                      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                        <span>{{ d.label }}</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; color: #6b6f6d;">{{ d.count }}</span>
+                      </div>
+                      <div style="height: 8px; background: #ececea;">
+                        <div style="height: 8px; width: {{ d.w }}; background: {{ d.color }};"></div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </section>
+
+              <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 20px;">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px;">Progress by team</div>
+                <div style="display: grid; gap: 13px;">
+                  <sc-for list="{{ byTeam }}" as="t" hint-placeholder-count="5">
+                    <div style="display: grid; grid-template-columns: 88px minmax(0, 1fr) 42px; gap: 12px; align-items: center;">
+                      <div style="font-size: 12px; color: #6b6f6d;">{{ t.team }}</div>
+                      <div style="height: 8px; background: #ececea;">
+                        <div style="height: 8px; width: {{ t.w }}; background: {{ t.color }};"></div>
+                      </div>
+                      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: right;">{{ t.pct }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </section>
+
+              <section style="background: #ffffff; border: 1px solid #e2e2df; padding: 20px;">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px;">Check-in compliance</div>
+                <div style="font-size: 44px; letter-spacing: -0.02em;">84%</div>
+                <div style="font-size: 12px; color: #6b6f6d; margin-top: 6px; line-height: 1.5;">of owners updated their key results in the last 7 days. Down 5 points from last week.</div>
+                <div style="display: flex; align-items: flex-end; gap: 3px; height: 52px; margin-top: 20px;">
+                  <sc-for list="{{ compliance }}" as="c" hint-placeholder-count="12">
+                    <div style="flex: 1; height: {{ c.h }}; background: {{ c.bg }};"></div>
+                  </sc-for>
+                </div>
+              </section>
+            </div>
+
+            <section style="background: #ffffff; border: 1px solid #e2e2df;">
+              <div style="padding: 14px 20px; border-bottom: 1px solid #ececea; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">Needs attention</div>
+              <sc-for list="{{ attention }}" as="a" hint-placeholder-count="3">
+                <div onClick="{{ a.open }}" style="display: grid; grid-template-columns: minmax(0, 1fr) 150px 120px; gap: 18px; align-items: center; padding: 15px 20px; border-bottom: 1px solid #f0f0ee; cursor: pointer;" style-hover="background: #fafaf8;">
+                  <div style="font-size: 14px;">{{ a.title }}</div>
+                  <div style="font-size: 12px; color: #6b6f6d;">{{ a.owner }}</div>
+                  <div style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{ a.color }};">{{ a.reason }}</div>
+                </div>
+              </sc-for>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isInbox }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 820px; background: #ffffff; border: 1px solid #e2e2df;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #ececea;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">Nudges</div>
+              <button onClick="{{ clearAll }}" style="background: none; border: none; font-size: 12px; color: #6b6f6d; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;">Mark all read</button>
+            </div>
+            <sc-for list="{{ notifications }}" as="n" hint-placeholder-count="5">
+              <div style="display: grid; grid-template-columns: 8px minmax(0, 1fr) 90px; gap: 16px; align-items: start; padding: 16px 20px; border-bottom: 1px solid #f0f0ee;">
+                <div style="width: 7px; height: 7px; border-radius: 50%; background: {{ n.dot }}; margin-top: 6px;"></div>
+                <div>
+                  <div style="font-size: 14px;">{{ n.title }}</div>
+                  <div style="font-size: 12px; color: #6b6f6d; margin-top: 5px; line-height: 1.5;">{{ n.body }}</div>
+                  <button onClick="{{ n.action }}" style="margin-top: 10px; padding: 6px 11px; border: 1px solid #dededa; background: #fbfbfa; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">{{ n.cta }}</button>
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #9a9d9a; text-align: right;">{{ n.time }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+      </div>
+    </main>
+  </div>
+</sc-if>
+
+<sc-if value="{{ checkinOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; background: rgba(16, 18, 17, 0.45); display: grid; place-items: center; padding: 24px; z-index: 20;">
+    <div style="width: 100%; max-width: 520px; background: #ffffff; border: 1px solid #d6d6d2; animation: fadeUp 160ms ease-out;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #ececea;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">Weekly check-in</div>
+        <button onClick="{{ closeCheckin }}" style="background: none; border: none; font-size: 17px; color: #6b6f6d; cursor: pointer; line-height: 1;">×</button>
+      </div>
+      <div style="padding: 22px;">
+        <div style="font-size: 16px; margin-bottom: 4px;">{{ checkinTitle }}</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b6f6d; margin-bottom: 22px;">{{ checkinKr }}</div>
+
+        <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 10px;">Current value — {{ checkinValue }}</label>
+        <input type="range" min="0" max="100" value="{{ checkinValue }}" onChange="{{ onCheckinValue }}" style="width: 100%; accent-color: oklch(0.62 0.13 155); margin-bottom: 22px;" />
+
+        <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 9px;">Confidence</label>
+        <div style="display: flex; gap: 1px; background: #e2e2df; border: 1px solid #e2e2df; margin-bottom: 20px;">
+          <sc-for list="{{ confidences }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.go }}" style="flex: 1; padding: 10px; border: none; background: {{ c.bg }}; color: {{ c.fg }}; font-size: 12px; cursor: pointer;">{{ c.label }}</button>
+          </sc-for>
+        </div>
+
+        <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6f6d; margin-bottom: 9px;">What changed</label>
+        <textarea value="{{ checkinNote }}" onChange="{{ onCheckinNote }}" rows="3" placeholder="Blockers, decisions, what happens next week." style="width: 100%; padding: 11px 12px; border: 1px solid #d6d6d2; background: #fbfbfa; font-size: 13px; border-radius: 0; resize: vertical; font-family: inherit;"></textarea>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 16px 22px; border-top: 1px solid #ececea; background: #fbfbfa;">
+        <button onClick="{{ closeCheckin }}" style="padding: 10px 16px; border: 1px solid #dededa; background: #ffffff; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">Cancel</button>
+        <button onClick="{{ submitCheckin }}" style="padding: 10px 18px; background: #101211; color: #f6f6f4; border: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: oklch(0.32 0.06 155);">Submit</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #101211; color: #f6f6f4; padding: 11px 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; z-index: 30; animation: fadeUp 160ms ease-out;">{{ toast }}</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;progressViz&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;bar&quot;,&quot;segments&quot;,&quot;dial&quot;],&quot;default&quot;:&quot;bar&quot;,&quot;tsType&quot;:&quot;'bar' | 'segments' | 'dial'&quot;,&quot;section&quot;:&quot;Progress visualization&quot;},&quot;quarterLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Q3 2026&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const GREEN = 'oklch(0.62 0.13 155)';
+const AMBER = 'oklch(0.58 0.13 75)';
+const RED = 'oklch(0.58 0.15 28)';
+
+const GOALS = [
+  { id: 'g1', title: 'Lift new-user activation to 55%', owner: 'Priya Anand', team: 'Product', mine: true,
+    description: 'Activation is the single biggest lever on retention this year. We are focused on the first session, not the first month.',
+    parent: 'Become the default planning tool for mid-market teams',
+    krs: [
+      { name: 'Activation rate (day 1)', start: 38, current: 49, target: 55, unit: '%' },
+      { name: 'Time to first goal created', start: 14, current: 6, target: 4, unit: ' min' },
+      { name: 'Onboarding completion', start: 52, current: 71, target: 85, unit: '%' }
+    ],
+    history: [
+      { date: 'Sep 04', note: 'Shipped the simplified goal template picker. Early cohort shows +4pts on day-1 activation.', delta: '+6%', color: GREEN },
+      { date: 'Aug 28', note: 'Instrumentation gap found in the mobile funnel; numbers below are desktop only.', delta: '+1%', color: GREEN },
+      { date: 'Aug 21', note: 'Held flat. Design review pushed the template work out a week.', delta: '0%', color: '#6b6f6d' },
+      { date: 'Aug 14', note: 'Baseline set after the new tracking plan landed.', delta: '+3%', color: GREEN }
+    ] },
+  { id: 'g2', title: 'Ship the platform rewrite to general availability', owner: 'Dana Okafor', team: 'Engineering', mine: true,
+    description: 'Move all remaining services onto the new runtime and retire the legacy scheduler before the December freeze.',
+    parent: 'Become the default planning tool for mid-market teams',
+    krs: [
+      { name: 'Services migrated', start: 0, current: 11, target: 18, unit: '' },
+      { name: 'P95 latency', start: 840, current: 520, target: 400, unit: 'ms' },
+      { name: 'Legacy endpoints retired', start: 0, current: 9, target: 24, unit: '' }
+    ],
+    history: [
+      { date: 'Sep 05', note: 'Two services migrated. Scheduler cutover slipping to week 11.', delta: '+4%', color: GREEN },
+      { date: 'Aug 29', note: 'Latency work paused for the incident review.', delta: '0%', color: '#6b6f6d' },
+      { date: 'Aug 22', note: 'Runtime upgrade unblocked the batch services.', delta: '+7%', color: GREEN },
+      { date: 'Aug 15', note: 'Migration tooling finished ahead of schedule.', delta: '+5%', color: GREEN }
+    ] },
+  { id: 'g3', title: 'Grow qualified pipeline 40% quarter over quarter', owner: 'Marcus Reyes', team: 'Sales',
+    description: 'Coverage is thin in the mid-market segment. Outbound and partner sourcing both need to carry weight this quarter.',
+    parent: 'Reach $40M ARR run rate',
+    krs: [
+      { name: 'Qualified pipeline ($M)', start: 12.0, current: 14.1, target: 16.8, unit: 'M' },
+      { name: 'Outbound meetings booked', start: 0, current: 180, target: 400, unit: '' },
+      { name: 'Partner-sourced deals', start: 0, current: 6, target: 25, unit: '' }
+    ],
+    history: [
+      { date: 'Sep 03', note: 'Outbound is behind plan. Two reps ramping slower than expected.', delta: '-2%', color: RED },
+      { date: 'Aug 27', note: 'Partner program launched; first six deals registered.', delta: '+5%', color: GREEN },
+      { date: 'Aug 20', note: 'Pipeline review cut $1.2M of stale opportunities.', delta: '-4%', color: RED },
+      { date: 'Aug 13', note: 'Quarter opened on plan.', delta: '+2%', color: GREEN }
+    ] },
+  { id: 'g4', title: 'Cut support backlog to under 200 open tickets', owner: 'Jae Lin', team: 'Support',
+    description: 'Backlog age is the top driver of low CSAT. Deflection and staffing both move this number.',
+    parent: 'Reach 95% customer satisfaction',
+    krs: [
+      { name: 'Open tickets', start: 640, current: 355, target: 200, unit: '' },
+      { name: 'Median first response', start: 9, current: 4, target: 3, unit: 'h' },
+      { name: 'Self-serve deflection', start: 18, current: 26, target: 35, unit: '%' }
+    ],
+    history: [
+      { date: 'Sep 06', note: 'Two contractors onboarded. Burn-down accelerating.', delta: '+8%', color: GREEN },
+      { date: 'Aug 30', note: 'Help centre rewrite shipped for the top 20 articles.', delta: '+4%', color: GREEN },
+      { date: 'Aug 23', note: 'Backlog flat through the release week spike.', delta: '0%', color: '#6b6f6d' },
+      { date: 'Aug 16', note: 'Triage rota introduced.', delta: '+3%', color: GREEN }
+    ] },
+  { id: 'g5', title: 'Hire 12 engineers without lowering the bar', owner: 'Rosa Vidal', team: 'People',
+    description: 'Headcount is approved for the platform and growth teams. Offer acceptance is the constraint, not top of funnel.',
+    parent: 'Build the team that can carry 2027',
+    krs: [
+      { name: 'Offers accepted', start: 0, current: 4, target: 12, unit: '' },
+      { name: 'Onsite-to-offer rate', start: 22, current: 24, target: 35, unit: '%' },
+      { name: 'Median time to hire', start: 61, current: 54, target: 40, unit: 'd' }
+    ],
+    history: [
+      { date: 'Sep 02', note: 'Two accepts, one decline on compensation.', delta: '+3%', color: GREEN },
+      { date: 'Aug 26', note: 'Loop redesign cut a stage; early signal is positive.', delta: '+2%', color: GREEN },
+      { date: 'Aug 19', note: 'Sourcing paused for a week during the panel retraining.', delta: '0%', color: '#6b6f6d' },
+      { date: 'Aug 12', note: 'Requisitions opened.', delta: '+1%', color: GREEN }
+    ] },
+  { id: 'g6', title: 'Reduce infrastructure spend 20%', owner: 'Dana Okafor', team: 'Engineering',
+    description: 'Committed-use discounts and right-sizing carry most of this. No customer-visible degradation.',
+    parent: 'Reach $40M ARR run rate',
+    krs: [
+      { name: 'Monthly spend ($K)', start: 410, current: 372, target: 328, unit: 'K' },
+      { name: 'Idle capacity', start: 31, current: 19, target: 10, unit: '%' },
+      { name: 'Workloads right-sized', start: 0, current: 22, target: 40, unit: '' }
+    ],
+    history: [
+      { date: 'Sep 01', note: 'Committed-use agreement signed.', delta: '+6%', color: GREEN },
+      { date: 'Aug 25', note: 'Right-sizing script rolled out to staging.', delta: '+2%', color: GREEN },
+      { date: 'Aug 18', note: 'Spend up during the load-test week.', delta: '-1%', color: RED },
+      { date: 'Aug 11', note: 'Audit complete.', delta: '+2%', color: GREEN }
+    ] }
+];
+
+const NOTIFS = [
+  { title: 'Check-in due for “Lift new-user activation to 55%”', body: 'Your last update was 9 days ago. The quarterly review packet is generated Monday.', cta: 'Check in', time: '2h ago', dot: AMBER, kind: 'checkin' },
+  { title: 'Marcus Reyes flagged pipeline growth as off track', body: 'Outbound meetings are at 45% of target with 5 weeks remaining. A recovery plan is attached to the objective.', cta: 'Open objective', time: '5h ago', dot: RED, kind: 'goal', id: 'g3' },
+  { title: 'Your objective was approved', body: 'The CEO approved “Lift new-user activation to 55%” and aligned it to the company objective.', cta: 'View', time: 'Yesterday', dot: GREEN, kind: 'goal', id: 'g1' },
+  { title: 'Quarter closes in 34 days', body: 'Final scoring opens on the last Monday of the quarter. Objectives without a check-in that week score as incomplete.', cta: 'See reports', time: '2 days ago', dot: '#c9cbc8', kind: 'reports' },
+  { title: 'Jae Lin commented on “Cut support backlog”', body: '“Contractor onboarding finished — we should beat 200 by week 11 if volume holds.”', cta: 'Open objective', time: '3 days ago', dot: '#c9cbc8', kind: 'goal', id: 'g4' }
+];
+
+const NAV = [
+  { key: 'dashboard', label: 'Dashboard', badge: '' },
+  { key: 'goals', label: 'Objectives', badge: '6' },
+  { key: 'tree', label: 'Alignment', badge: '' },
+  { key: 'reports', label: 'Reports', badge: '' },
+  { key: 'inbox', label: 'Nudges', badge: '3' }
+];
+
+const TITLES = {
+  dashboard: ['Dashboard', 'Your quarter at a glance'],
+  goals: ['Objectives', 'All objectives you can see'],
+  detail: ['Objective', 'Detail and check-in history'],
+  create: ['New objective', 'Draft · not yet submitted'],
+  tree: ['Alignment', 'How objectives roll up'],
+  reports: ['Reports', 'Q3 2026 · company-wide'],
+  inbox: ['Nudges', '3 unread'],
+  login: ['', '']
+};
+
+class Component extends DCLogic {
+  state = {
+    screen: 'login', email: '', password: '',
+    selectedId: 'g1', filter: 'All', sort: 'Progress', query: '',
+    checkin: null, checkinValue: 49, checkinConf: 'On track', checkinNote: '',
+    step: 1, level: 'Team',
+    form: { title: '', why: '', parent: 'Become the default planning tool for mid-market teams',
+      krs: [{ name: '', start: '', target: '' }, { name: '', start: '', target: '' }] },
+    goals: GOALS, notifications: NOTIFS, toast: null
+  };
+
+  go = (screen) => this.setState({ screen });
+  flash = (toast) => { this.setState({ toast }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: null }), 2200); };
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  pctOf(kr) {
+    const span = kr.target - kr.start;
+    if (span === 0) return 0;
+    return Math.max(0, Math.min(1, (kr.current - kr.start) / span));
+  }
+  goalPct(g) { return g.krs.reduce((a, k) => a + this.pctOf(k), 0) / g.krs.length; }
+
+  statusOf(pct) {
+    const expected = 0.66;
+    if (pct >= expected - 0.06) return { label: 'On track', color: GREEN };
+    if (pct >= expected - 0.22) return { label: 'At risk', color: AMBER };
+    return { label: 'Off track', color: RED };
+  }
+
+  viz() { return this.props.progressViz || 'bar'; }
+
+  decorate(g) {
+    const pct = this.goalPct(g);
+    const st = this.statusOf(pct);
+    const done = g.krs.filter(k => this.pctOf(k) >= 1).length;
+    return {
+      ...g, pct,
+      pctLabel: Math.round(pct * 100) + '%',
+      pctWidth: Math.round(pct * 100) + '%',
+      color: st.color, statusLabel: st.label,
+      krSummary: g.krs.length + ' key results · ' + done + ' complete',
+      segments: this.segments(pct, st.color),
+      dial: this.dial(pct, st.color),
+      open: () => this.setState({ screen: 'detail', selectedId: g.id })
+    };
+  }
+
+  segments(pct, color) {
+    const on = Math.round(pct * 10);
+    return Array.from({ length: 10 }, (_, i) => ({ bg: i < on ? color : '#ececea' }));
+  }
+  dial(pct, color) {
+    const deg = Math.round(pct * 360);
+    return 'conic-gradient(' + color + ' ' + deg + 'deg, #ececea ' + deg + 'deg)';
+  }
+
+  renderVals() {
+    const s = this.state;
+    const viz = this.viz();
+    const all = s.goals.map(g => this.decorate(g));
+    const detail = all.find(g => g.id === s.selectedId) || all[0];
+
+    let list = all.filter(g => {
+      const q = s.query.trim().toLowerCase();
+      const matchQ = !q || g.title.toLowerCase().includes(q) || g.owner.toLowerCase().includes(q) || g.team.toLowerCase().includes(q);
+      const matchF = s.filter === 'All' || g.statusLabel === s.filter;
+      return matchQ && matchF;
+    });
+    list = list.slice().sort((a, b) => s.sort === 'Progress' ? b.pct - a.pct : (s.sort === 'Owner' ? a.owner.localeCompare(b.owner) : a.title.localeCompare(b.title)));
+
+    const onTrack = all.filter(g => g.statusLabel === 'On track').length;
+    const atRisk = all.filter(g => g.statusLabel === 'At risk').length;
+    const offTrack = all.filter(g => g.statusLabel === 'Off track').length;
+    const avg = Math.round(all.reduce((a, g) => a + g.pct, 0) / all.length * 100);
+
+    const teamMap = {};
+    all.forEach(g => { (teamMap[g.team] = teamMap[g.team] || []).push(g.pct); });
+    const byTeam = Object.keys(teamMap).map(team => {
+      const p = Math.round(teamMap[team].reduce((a, b) => a + b, 0) / teamMap[team].length * 100);
+      return { team, w: p + '%', pct: p + '%', color: this.statusOf(p / 100).color };
+    }).sort((a, b) => parseInt(b.pct) - parseInt(a.pct));
+
+    const pacing = Array.from({ length: 13 }, (_, i) => {
+      const h = [22, 30, 34, 41, 46, 48, 55, 58, 61, 64, 0, 0, 0][i];
+      return { label: 'Week ' + (i + 1), h: h ? h + '%' : '6%', bg: h ? (i === 9 ? '#101211' : '#c9cbc8') : '#ececea' };
+    });
+    const compliance = [72, 78, 81, 86, 90, 88, 92, 89, 94, 91, 89, 84].map((v, i) => ({ h: v + '%', bg: i === 11 ? AMBER : '#c9cbc8' }));
+
+    const nav = NAV.map(n => {
+      const active = s.screen === n.key || (n.key === 'goals' && (s.screen === 'detail' || s.screen === 'create'));
+      return { ...n, bg: active ? '#101211' : 'transparent', fg: active ? '#f6f6f4' : '#101211',
+        badgeFg: active ? '#8f938f' : '#9a9d9a', go: () => this.go(n.key) };
+    });
+
+    const filters = ['All', 'On track', 'At risk', 'Off track'].map(f => ({
+      label: f, go: () => this.setState({ filter: f }),
+      bg: s.filter === f ? '#101211' : '#ffffff', fg: s.filter === f ? '#f6f6f4' : '#101211',
+      border: s.filter === f ? '#101211' : '#dededa'
+    }));
+
+    const tree = [
+      { id: 'g2', children: [
+        { title: 'Retire the legacy scheduler', owner: 'Ivan Petrov', pct: 0.42 },
+        { title: 'Migrate billing services', owner: 'Nora Haddad', pct: 0.78 } ] },
+      { id: 'g1', children: [
+        { title: 'Rebuild the first-run experience', owner: 'Sam Oyelaran', pct: 0.81 },
+        { title: 'Goal templates library', owner: 'Priya Anand', pct: 0.66 } ] },
+      { id: 'g3', children: [
+        { title: 'Outbound motion for mid-market', owner: 'Lena Fischer', pct: 0.45 },
+        { title: 'Partner co-sell program', owner: 'Marcus Reyes', pct: 0.24 } ] },
+      { id: 'g4', children: [
+        { title: 'Help centre rewrite', owner: 'Jae Lin', pct: 0.70 } ] }
+    ].map(node => {
+      const g = all.find(x => x.id === node.id);
+      return { title: g.title, team: g.team, owner: g.owner, pctLabel: g.pctLabel, pctWidth: g.pctWidth, color: g.color,
+        children: node.children.map(c => ({ ...c, pctLabel: Math.round(c.pct * 100) + '%', pctWidth: Math.round(c.pct * 100) + '%', color: this.statusOf(c.pct).color })) };
+    });
+
+    const openCheckin = (id) => this.setState({ checkin: id, checkinValue: Math.round(this.goalPct(s.goals.find(g => g.id === id)) * 100), checkinNote: '' });
+
+    const notifications = s.notifications.map(n => ({
+      ...n,
+      action: () => {
+        if (n.kind === 'checkin') openCheckin('g1');
+        else if (n.kind === 'reports') this.go('reports');
+        else this.setState({ screen: 'detail', selectedId: n.id });
+      }
+    }));
+
+    const form = {
+      ...s.form,
+      krs: s.form.krs.map((k, i) => ({
+        ...k,
+        onName: e => this.editKr(i, 'name', e.target.value),
+        onStart: e => this.editKr(i, 'start', e.target.value),
+        onTarget: e => this.editKr(i, 'target', e.target.value),
+        remove: () => this.setState(st => ({ form: { ...st.form, krs: st.form.krs.filter((_, j) => j !== i) } }))
+      }))
+    };
+
+    return {
+      isLogin: s.screen === 'login', isApp: s.screen !== 'login',
+      isDashboard: s.screen === 'dashboard', isGoals: s.screen === 'goals', isDetail: s.screen === 'detail',
+      isCreate: s.screen === 'create', isTree: s.screen === 'tree', isReports: s.screen === 'reports', isInbox: s.screen === 'inbox',
+      email: s.email, password: s.password,
+      onEmail: e => this.setState({ email: e.target.value }),
+      onPassword: e => this.setState({ password: e.target.value }),
+      signIn: () => this.setState({ screen: 'dashboard' }),
+      signOut: () => this.setState({ screen: 'login' }),
+      nav, quarter: this.props.quarterLabel || 'Q3 2026', daysLeft: 34,
+      pageTitle: TITLES[s.screen][0], pageMeta: TITLES[s.screen][1],
+      goGoals: () => this.go('goals'), goCreate: () => this.setState({ screen: 'create', step: 1 }), goTree: () => this.go('tree'),
+
+      vizBar: viz === 'bar', vizSegments: viz === 'segments', vizDial: viz === 'dial',
+
+      stats: [
+        { label: 'Average progress', value: avg + '%', sub: 'Expected pace: 66%', color: '#101211' },
+        { label: 'On track', value: onTrack, sub: 'of ' + all.length + ' objectives', color: GREEN },
+        { label: 'At risk', value: atRisk, sub: 'need a recovery plan', color: AMBER },
+        { label: 'Off track', value: offTrack, sub: 'escalated to the CEO', color: RED }
+      ],
+      myGoals: all.filter(g => g.mine),
+      listGoals: list, filters, sort: s.sort, query: s.query,
+      onQuery: e => this.setState({ query: e.target.value }),
+      toggleSort: () => this.setState(st => ({ sort: st.sort === 'Progress' ? 'Owner' : (st.sort === 'Owner' ? 'Title' : 'Progress') })),
+      pacing, compliance, byTeam,
+
+      detail: {
+        ...detail,
+        krs: detail.krs.map(k => {
+          const p = this.pctOf(k);
+          return { name: k.name, readout: k.current + k.unit + ' of ' + k.target + k.unit + ' · from ' + k.start + k.unit,
+            pctLabel: Math.round(p * 100) + '%', pctWidth: Math.round(p * 100) + '%',
+            color: this.statusOf(p).color, segments: this.segments(p, this.statusOf(p).color), dial: this.dial(p, this.statusOf(p).color) };
+        }),
+        meta: [
+          { k: 'Owner', v: detail.owner }, { k: 'Team', v: detail.team },
+          { k: 'Cycle', v: 'Q3 2026' }, { k: 'Last check-in', v: detail.history[0].date },
+          { k: 'Visibility', v: 'Company-wide' }
+        ]
+      },
+      openCheckinDetail: () => openCheckin(detail.id),
+      openCheckinFirst: () => openCheckin('g1'),
+
+      tree,
+      distribution: [
+        { label: 'On track', count: onTrack, w: Math.round(onTrack / all.length * 100) + '%', color: GREEN },
+        { label: 'At risk', count: atRisk, w: Math.round(atRisk / all.length * 100) + '%', color: AMBER },
+        { label: 'Off track', count: offTrack, w: Math.round(offTrack / all.length * 100) + '%', color: RED }
+      ],
+      attention: all.filter(g => g.statusLabel !== 'On track').map(g => ({
+        title: g.title, owner: g.owner, color: g.color,
+        reason: g.statusLabel === 'Off track' ? 'No plan filed' : 'Behind pace',
+        open: g.open
+      })),
+      notifications,
+      clearAll: () => this.flash('All nudges marked read'),
+
+      steps: [1, 2, 3].map(n => ({
+        num: '0' + n, label: ['Objective', 'Key results', 'Review'][n - 1],
+        bg: s.step === n ? '#101211' : '#ffffff', fg: s.step === n ? '#f6f6f4' : '#9a9d9a'
+      })),
+      step1: s.step === 1, step2: s.step === 2, step3: s.step === 3,
+      form,
+      levels: ['Individual', 'Team', 'Company'].map(l => ({
+        label: l, go: () => this.setState({ level: l }),
+        bg: s.level === l ? '#101211' : '#ffffff', fg: s.level === l ? '#f6f6f4' : '#101211'
+      })),
+      onFormTitle: e => this.setState(st => ({ form: { ...st.form, title: e.target.value } })),
+      onFormWhy: e => this.setState(st => ({ form: { ...st.form, why: e.target.value } })),
+      onFormParent: e => this.setState(st => ({ form: { ...st.form, parent: e.target.value } })),
+      addKr: () => this.setState(st => ({ form: { ...st.form, krs: [...st.form.krs, { name: '', start: '', target: '' }] } })),
+      reviewTitle: s.form.title || 'Untitled objective',
+      reviewWhy: s.form.why || 'No context added yet.',
+      reviewKrs: s.form.krs.filter(k => k.name).map(k => ({ name: k.name, range: (k.start || '—') + ' → ' + (k.target || '—') })),
+      nextLabel: s.step === 3 ? 'Submit for approval' : 'Continue',
+      prevStep: () => s.step === 1 ? this.go('goals') : this.setState({ step: s.step - 1 }),
+      nextStep: () => {
+        if (s.step < 3) this.setState({ step: s.step + 1 });
+        else { this.setState({ screen: 'goals', step: 1 }); this.flash('Objective submitted for approval'); }
+      },
+
+      checkinOpen: !!s.checkin,
+      checkinTitle: s.checkin ? (all.find(g => g.id === s.checkin) || {}).title : '',
+      checkinKr: s.checkin ? (all.find(g => g.id === s.checkin) || {}).krSummary : '',
+      checkinValue: s.checkinValue, checkinNote: s.checkinNote,
+      onCheckinValue: e => this.setState({ checkinValue: Number(e.target.value) }),
+      onCheckinNote: e => this.setState({ checkinNote: e.target.value }),
+      confidences: ['On track', 'At risk', 'Off track'].map(c => ({
+        label: c, go: () => this.setState({ checkinConf: c }),
+        bg: s.checkinConf === c ? '#101211' : '#ffffff', fg: s.checkinConf === c ? '#f6f6f4' : '#101211'
+      })),
+      closeCheckin: () => this.setState({ checkin: null }),
+      submitCheckin: () => { this.setState({ checkin: null }); this.flash('Check-in recorded'); },
+      toast: s.toast
+    };
+  }
+
+  editKr(i, field, value) {
+    this.setState(st => {
+      const krs = st.form.krs.slice();
+      krs[i] = { ...krs[i], [field]: value };
+      return { form: { ...st.form, krs } };
+    });
+  }
+}
+</script>
+</body>
+</html>
