@@ -65,42 +65,110 @@ visits after a quarter boundary passes (`src/lib/quarters.ts`), and any
 quarter that isn't current is `locked` — goal create/edit is blocked
 server-side for locked quarters (`src/app/(app)/goals/actions.ts`).
 
-## Deploying (Hostinger)
+## Deploying to Hostinger (hPanel Node.js app)
 
-Hostinger's shared hosting is not a Node.js runtime; deploy this app either to
-a **Hostinger VPS** or a Hostinger plan with Node.js application support:
+This targets Hostinger's **hPanel → Node.js** application feature (Business /
+Cloud shared hosting) — no root SSH required. The app is built as a
+**standalone bundle** (`output: "standalone"` in `next.config.ts`) specifically
+for this: it's a self-contained `server.js` plus only the `node_modules` it
+actually needs, so you upload one folder and point hPanel's Node.js app at it.
+This was verified end-to-end in this repo: built, packaged, launched exactly
+as below, and confirmed a real signed-in user's data-backed page rendered
+correctly from the standalone bundle.
 
-1. **Database**: Hostinger doesn't offer managed Postgres, so either install
-   PostgreSQL on the VPS yourself, or point `DATABASE_URL` at an external
-   managed Postgres (Neon, Supabase, Railway, etc.) — either works fine, the
-   app only needs a reachable connection string.
-2. **Build & run**:
-   ```bash
-   npm ci
-   npm run build
-   npm run db:migrate   # applies migrations (prisma migrate deploy)
-   npm run db:seed      # optional — only if you want the sample org data
-   npm run start        # or run under pm2 behind nginx as a reverse proxy with TLS
-   ```
-3. **Environment variables**: set `DATABASE_URL`, `NEXTAUTH_SECRET`,
-   `NEXTAUTH_URL` (your real domain, `https://...`), `GOOGLE_CLIENT_ID`,
-   `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS` in whatever Hostinger surface you're
-   using (VPS: a `.env` file or systemd unit; Node.js App panel: its
-   environment variables screen).
-4. **Google OAuth**: add the production callback URL
-   (`https://<your-domain>/api/auth/callback/google`) to the OAuth client in
-   Google Cloud Console before going live.
-5. Building runs with `NODE_ENV=production` automatically, which removes the
-   dev-only demo-account sign-in — production only accepts Google sign-in.
+### 1. Get a PostgreSQL database
+
+Hostinger's shared/Business/Cloud plans ship MySQL, not PostgreSQL — this app
+needs Postgres, so use an external managed one. **[Neon](https://neon.tech)**
+or **[Supabase](https://supabase.com)** both have a free tier that's plenty
+for this app; either gives you a `postgresql://...` connection string in a
+couple of minutes. Copy it — you'll use it as `DATABASE_URL` below.
+
+### 2. Set up Google OAuth
+
+In [Google Cloud Console](https://console.cloud.google.com/apis/credentials):
+create an **OAuth client ID** (type: Web application), and add
+`https://<your-domain>/api/auth/callback/google` as an authorized redirect
+URI (use your real domain — you can add `http://localhost:3000/api/auth/callback/google`
+too, for local testing). Note the Client ID and Client Secret.
+
+### 3. Build the deployable bundle (on your own machine)
+
+Hostinger's shared Node.js hosting isn't a great place to run `next build`
+itself (limited resources, no guarantee of build tools) — build locally (or
+in CI) and upload only the output:
+
+```bash
+npm ci
+npm run build          # runs `next build`, then a postbuild step that
+                        # assembles a complete .next/standalone folder
+```
+
+This produces `.next/standalone/` — a folder containing `server.js`,
+`node_modules/`, `public/`, and `.next/static/`. That folder is the entire
+deployable app. Zip it up:
+
+```bash
+cd .next/standalone && zip -r ../../deploy.zip . && cd ../..
+```
+
+### 4. Run database migrations
+
+Run this from your own machine (or CI), pointed at the **production**
+`DATABASE_URL` from step 1 — the standalone bundle doesn't include the Prisma
+CLI, so migrations aren't run on Hostinger itself:
+
+```bash
+DATABASE_URL="<your production connection string>" npm run db:migrate
+# optional, only if you want the sample org data to start:
+DATABASE_URL="<your production connection string>" npm run db:seed
+```
+
+### 5. Create the Node.js app in hPanel
+
+In **hPanel → Advanced → Node.js**:
+
+1. Create a new Node.js application. Pick **Node.js 20 or later** (this app
+   requires 20.9+).
+2. Set the **application root** to a folder (e.g. `goals-app`), then upload
+   and extract `deploy.zip` into it via File Manager (or FTP).
+3. Set the **application startup file** to `server.js`.
+4. In the app's **environment variables** screen, add:
+   - `DATABASE_URL` — the same production connection string from step 1.
+   - `NEXTAUTH_SECRET` — a random string (generate with `openssl rand -base64 32`).
+   - `NEXTAUTH_URL` — your real site URL, e.g. `https://goals.yourdomain.com`.
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — from step 2.
+   - `ADMIN_EMAILS` — comma-separated emails to auto-promote to Admin on first sign-in.
+
+   Leave `PORT`/`HOSTNAME` alone — Hostinger sets `PORT` itself and
+   `server.js` already reads it (`process.env.PORT`, falling back to 3000).
+5. Start (or restart) the app from hPanel.
+
+### 6. Redeploying after a code change
+
+Repeat steps 3–4 (rebuild, re-zip, re-run migrations only if the schema
+changed), re-upload `deploy.zip` over the application root, and restart the
+app in hPanel.
+
+### If you outgrow shared hosting
+
+A **Hostinger VPS** works too, and is more flexible (real SSH, can run
+PostgreSQL itself, no rebuild-and-reupload dance): `git clone` the repo,
+`npm ci && npm run build`, then `npm run start:standalone` (or plain
+`npm run start`) under a process manager like `pm2`, behind `nginx` as a
+TLS-terminating reverse proxy. Steps 1–2 and the environment variable list
+above still apply.
 
 ## Project layout
 
 ```
-prisma/schema.prisma        Data model
-prisma/seed.ts               Quarters + sample org (safe to edit/delete via Manage Users)
-src/lib/auth.ts              NextAuth config (Google + dev-only Credentials provider)
-src/lib/prisma.ts            Prisma client (pg driver adapter)
-src/lib/quarters.ts          Quarter helpers (self-maintaining "current quarter")
-src/app/(app)/               Authenticated app shell + goals/team/organization/profile
-src/app/login/               Public sign-in page
+prisma/schema.prisma          Data model
+prisma/seed.ts                Quarters + sample org (safe to edit/delete via Manage Users)
+next.config.ts                output: "standalone" — see Deploying to Hostinger below
+scripts/package-standalone.js Assembles the complete .next/standalone deploy bundle (runs as "postbuild")
+src/lib/auth.ts               NextAuth config (Google + dev-only Credentials provider)
+src/lib/prisma.ts             Prisma client (pg driver adapter)
+src/lib/quarters.ts           Quarter helpers (self-maintaining "current quarter")
+src/app/(app)/                Authenticated app shell + goals/team/organization/profile
+src/app/login/                Public sign-in page
 ```

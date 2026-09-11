@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "design/**",
     // Generated Prisma client.
     "src/generated/**",
+    // Plain CommonJS Node build script (runs outside the Next/TS toolchain).
+    "scripts/**",
   ]),
 ]);
 
