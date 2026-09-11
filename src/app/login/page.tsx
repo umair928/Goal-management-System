@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { auth, signIn } from "@/lib/auth";
+import { auth, signIn, demoLoginEnabled } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ROLE_LABELS } from "@/lib/session";
 
@@ -8,8 +8,8 @@ export default async function LoginPage() {
   const session = await auth();
   if (session?.user) redirect("/goals");
 
-  const isDev = process.env.NODE_ENV !== "production";
-  const demoUsers = isDev
+  const googleConfigured = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+  const demoUsers = demoLoginEnabled
     ? await prisma.user.findMany({
         orderBy: [{ role: "asc" }, { name: "asc" }],
         select: { email: true, name: true, role: true },
@@ -47,23 +47,25 @@ export default async function LoginPage() {
             Set the quarter, track the growth. One place for every goal at the company.
           </p>
 
-          <form action={signInWithGoogle}>
-            <button
-              type="submit"
-              className="w-full py-3 bg-chambray hover:bg-chambray-hover text-white font-heading text-[12px] tracking-[0.1em] uppercase rounded-md cursor-pointer transition-colors"
-            >
-              Sign in with Google
-            </button>
-          </form>
+          {googleConfigured && (
+            <form action={signInWithGoogle}>
+              <button
+                type="submit"
+                className="w-full py-3 bg-chambray hover:bg-chambray-hover text-white font-heading text-[12px] tracking-[0.1em] uppercase rounded-md cursor-pointer transition-colors"
+              >
+                Sign in with Google
+              </button>
+            </form>
+          )}
 
           <p className="text-[11px] text-faint leading-relaxed mt-4 text-center">
             Access level comes from your account. There is no role selector in the product.
           </p>
 
-          {isDev && demoUsers.length > 0 && (
+          {demoLoginEnabled && demoUsers.length > 0 && (
             <div className="mt-6 pt-4 border-t border-border-soft">
               <div className="font-heading text-[9px] tracking-[0.14em] uppercase text-faint mb-2.5">
-                Demo accounts (dev only)
+                Demo accounts
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {demoUsers.map((u) => (
@@ -80,7 +82,7 @@ export default async function LoginPage() {
                 ))}
               </div>
               <p className="text-[11px] text-faint leading-relaxed mt-2">
-                Sample data for local development — never shown in production.
+                Sample data — for testing only, sign-in as any account with no password.
               </p>
             </div>
           )}

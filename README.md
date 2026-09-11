@@ -33,17 +33,24 @@ npm run dev
 
 Open http://localhost:3000.
 
-### Signing in without Google during development
+### Signing in without Google
 
-Real sign-in is Google OAuth only. To make local development possible before
-you've set up Google OAuth credentials, the login page also shows a **"Demo
-accounts"** section — but only when `NODE_ENV !== "production"` (it is never
-present in a production build, see `src/lib/auth.ts`). It lets you sign in
-directly as any seeded user (`ceo@example.com`, `manager@example.com`,
-`sam.oyelaran@example.com`, etc. — see `prisma/seed.ts`) with no password.
-Once you configure real Google OAuth credentials you can sign in with your
-own Google account too; the first login by an email listed in `ADMIN_EMAILS`
-is auto-promoted to Admin.
+Real sign-in is Google OAuth. To make it possible to click through the app
+before you've set up Google OAuth credentials, the login page also shows a
+**"Demo accounts"** section that signs in directly as any seeded user
+(`ceo@example.com`, `manager@example.com`, `sam.oyelaran@example.com`, etc. —
+see `prisma/seed.ts`) with no password:
+
+- Outside production (`npm run dev`), it's always on.
+- In a **production** build it's off unless you explicitly set
+  `ALLOW_DEMO_LOGIN=true` — meant only for smoke-testing a fresh deployment
+  before Google OAuth is wired up. Unset it once you have real sign-in
+  working; anyone who can reach the site can sign in as anyone while it's on.
+- The "Sign in with Google" button only appears once `GOOGLE_CLIENT_ID` and
+  `GOOGLE_CLIENT_SECRET` are both set.
+
+Once real Google OAuth is configured, the first login by an email listed in
+`ADMIN_EMAILS` is auto-promoted to Admin.
 
 ### Environment variables
 
@@ -84,13 +91,19 @@ or **[Supabase](https://supabase.com)** both have a free tier that's plenty
 for this app; either gives you a `postgresql://...` connection string in a
 couple of minutes. Copy it — you'll use it as `DATABASE_URL` below.
 
-### 2. Set up Google OAuth
+### 2. Set up Google OAuth (or test first with demo sign-in)
 
 In [Google Cloud Console](https://console.cloud.google.com/apis/credentials):
 create an **OAuth client ID** (type: Web application), and add
 `https://<your-domain>/api/auth/callback/google` as an authorized redirect
 URI (use your real domain — you can add `http://localhost:3000/api/auth/callback/google`
 too, for local testing). Note the Client ID and Client Secret.
+
+Don't have this yet and just want to see the site working first? Skip
+`GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` for now and set `ALLOW_DEMO_LOGIN=true`
+instead (env vars, step 5) — the login page will show a no-password "demo
+accounts" list you can click through all four roles with. Come back and set
+up Google + unset `ALLOW_DEMO_LOGIN` before sharing the link with anyone else.
 
 ### 3. Build the deployable bundle (on your own machine)
 
@@ -137,8 +150,11 @@ In **hPanel → Advanced → Node.js**:
    - `DATABASE_URL` — the same production connection string from step 1.
    - `NEXTAUTH_SECRET` — a random string (generate with `openssl rand -base64 32`).
    - `NEXTAUTH_URL` — your real site URL, e.g. `https://goals.yourdomain.com`.
-   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — from step 2.
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — from step 2 (leave both
+     blank for now if you're testing with demo sign-in first).
    - `ADMIN_EMAILS` — comma-separated emails to auto-promote to Admin on first sign-in.
+   - `ALLOW_DEMO_LOGIN` — set to `true` only if you skipped Google OAuth in
+     step 2 and want to test with the demo accounts first; otherwise omit it.
 
    Leave `PORT`/`HOSTNAME` alone — Hostinger sets `PORT` itself and
    `server.js` already reads it (`process.env.PORT`, falling back to 3000).

@@ -10,37 +10,53 @@ const adminEmails = (process.env.ADMIN_EMAILS ?? "")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
-// Dev-only "sign in as a seeded demo account" provider, mirroring the
-// prototype's demo account switcher. Never registered in production —
-// real deployments authenticate exclusively through Google.
-const devProviders =
-  process.env.NODE_ENV === "production"
-    ? []
-    : [
-        Credentials({
-          id: "dev-account",
-          name: "Demo account",
-          credentials: { email: { label: "Email", type: "text" } },
-          async authorize(creds) {
-            const email = (creds?.email as string | undefined)?.toLowerCase().trim();
-            if (!email) return null;
-            const user = await prisma.user.findUnique({ where: { email } });
-            if (!user) return null;
-            return { id: user.id, email: user.email, name: user.name, image: user.image };
-          },
-        }),
-      ];
+const googleConfigured = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+
+// "Sign in as a seeded demo account, no password" — always on outside
+// production (mirrors the prototype's demo account switcher). In production
+// it stays off unless ALLOW_DEMO_LOGIN=true is explicitly set, which exists
+// only so a deployment can be smoke-tested before real Google OAuth
+// credentials are configured — unset it once real sign-in is wired up.
+export const demoLoginEnabled = process.env.NODE_ENV !== "production" || process.env.ALLOW_DEMO_LOGIN === "true";
+
+if (process.env.NODE_ENV === "production" && process.env.ALLOW_DEMO_LOGIN === "true") {
+  console.warn(
+    "[auth] ALLOW_DEMO_LOGIN=true — anyone can sign in as any seeded account with no password. " +
+      "This is for pre-launch testing only; unset it before sharing this deployment publicly."
+  );
+}
+
+const demoProviders = demoLoginEnabled
+  ? [
+      Credentials({
+        id: "dev-account",
+        name: "Demo account",
+        credentials: { email: { label: "Email", type: "text" } },
+        async authorize(creds) {
+          const email = (creds?.email as string | undefined)?.toLowerCase().trim();
+          if (!email) return null;
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user) return null;
+          return { id: user.id, email: user.email, name: user.name, image: user.image };
+        },
+      }),
+    ]
+  : [];
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   trustHost: true,
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    ...devProviders,
+    ...(googleConfigured
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
+    ...demoProviders,
   ],
   pages: {
     signIn: "/login",
