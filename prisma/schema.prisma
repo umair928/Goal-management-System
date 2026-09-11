@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  CEO
+  ADMIN
+}
+
+enum Category {
+  INDIVIDUAL
+  TEAM
+  ORGANIZATIONAL
+}
+
+enum GoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  AT_RISK
+  COMPLETED
+}
+
+// --- Auth.js (NextAuth) required models ---
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- Application models ---
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  role      Role     @default(EMPLOYEE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Admin-assigned fields (read-only to the user themselves)
+  designation String?
+  department  String?
+  accessLevel String?
+
+  managerId String?
+  manager   User?   @relation("ManagerReports", fields: [managerId], references: [id])
+  reports   User[]  @relation("ManagerReports")
+
+  // Self-editable profile fields
+  preferredName String?
+  pronouns      String?
+  location      String?
+  phone         String?
+  about         String? @db.Text
+  skills        String?
+
+  accounts  Account[]
+  sessions  Session[]
+  goals     Goal[]
+  remarks   Remark[]
+  auditLogs AuditLog[]
+}
+
+model Quarter {
+  id        String   @id @default(cuid())
+  label     String   @unique
+  startDate DateTime
+  endDate   DateTime
+  locked    Boolean  @default(false)
+  isCurrent Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  goals Goal[]
+}
+
+model Goal {
+  id          String     @id @default(cuid())
+  ownerId     String
+  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  quarterId   String
+  quarter     Quarter    @relation(fields: [quarterId], references: [id], onDelete: Cascade)
+  category    Category
+  title       String
+  description String?    @db.Text
+  status      GoalStatus @default(NOT_STARTED)
+  confidence  Int        @default(5)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  keyResults KeyResult[]
+  remarks    Remark[]
+
+  @@index([ownerId, quarterId])
+}
+
+model KeyResult {
+  id          String  @id @default(cuid())
+  goalId      String
+  goal        Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  description String
+  unit        String?
+  current     Float   @default(0)
+  target      Float   @default(0)
+  order       Int     @default(0)
+}
+
+model Remark {
+  id        String   @id @default(cuid())
+  goalId    String
+  goal      Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([goalId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

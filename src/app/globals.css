@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --color-chambray: #455e7f;
+  --color-chambray-hover: #37506e;
+  --color-gold: #d7a839;
+  --color-surface: #f5f7fa;
+  --color-surface-alt: #f9fafc;
+  --color-card: #ffffff;
+  --color-border: #d9e0ea;
+  --color-border-soft: #e6ebf2;
+  --color-border-softer: #edf1f6;
+  --color-border-input: #c7d1df;
+  --color-border-strong: #cfd8e4;
+  --color-ink: #333333;
+  --color-muted: #666666;
+  --color-faint: #8a94a3;
+
+  --color-cat-individual: #455e7f;
+  --color-cat-team: #0695c2;
+  --color-cat-organizational: #a980d5;
+
+  --color-status-green: #237c6e;
+  --color-status-amber: #8a6a16;
+  --color-status-red: #a8412c;
+
+  --color-pill-not-started-bg: #e6ebf2;
+  --color-pill-not-started-fg: #455e7f;
+  --color-pill-in-progress-bg: #e6ecf5;
+  --color-pill-in-progress-fg: #22384f;
+  --color-pill-at-risk-bg: #fbf3e0;
+  --color-pill-at-risk-fg: #4a3f22;
+  --color-pill-completed-bg: #e3f2ee;
+  --color-pill-completed-fg: #1e3b2c;
+}
+
+@theme inline {
+  --font-heading: var(--font-montserrat), Arial, Helvetica, sans-serif;
+  --font-body: Arial, Helvetica, sans-serif;
+
+  --color-chambray: var(--color-chambray);
+  --color-chambray-hover: var(--color-chambray-hover);
+  --color-gold: var(--color-gold);
+  --color-surface: var(--color-surface);
+  --color-surface-alt: var(--color-surface-alt);
+  --color-card: var(--color-card);
+  --color-border: var(--color-border);
+  --color-border-soft: var(--color-border-soft);
+  --color-border-softer: var(--color-border-softer);
+  --color-border-input: var(--color-border-input);
+  --color-border-strong: var(--color-border-strong);
+  --color-ink: var(--color-ink);
+  --color-muted: var(--color-muted);
+  --color-faint: var(--color-faint);
+
+  --color-cat-individual: var(--color-cat-individual);
+  --color-cat-team: var(--color-cat-team);
+  --color-cat-organizational: var(--color-cat-organizational);
+
+  --color-status-green: var(--color-status-green);
+  --color-status-amber: var(--color-status-amber);
+  --color-status-red: var(--color-status-red);
+}
+
+html,
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--color-gold);
+}
+
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--color-gold);
+  outline-offset: -1px;
+}
+
+::placeholder {
+  color: var(--color-faint);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 160ms ease-out;
+}
