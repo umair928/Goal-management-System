@@ -1,6 +1,7 @@
 import { requireSession } from "@/lib/session";
 import { ensureCurrentQuarterExists, listQuarters } from "@/lib/quarters";
 import { Header } from "@/components/header";
+import styles from "./layout.module.css";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await requireSession();
@@ -14,7 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         quarters={quarters.map((q) => ({ label: q.label, locked: q.locked }))}
         defaultLabel={current.label}
       />
-      <div className="px-6 pt-[26px] pb-[72px]">{children}</div>
+      <div className={styles.content}>{children}</div>
     </div>
   );
 }

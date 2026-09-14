@@ -1,0 +1,207 @@
+.card {
+  flex: 1 1 300px;
+  min-width: 0;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.titleBlock {
+  min-width: 0;
+}
+
+.categoryRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.categoryDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+}
+
+.categoryLabel {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+.editLink {
+  flex-shrink: 0;
+  padding: 5px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  color: var(--color-chambray);
+  text-decoration: none;
+}
+
+.progressTrack {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-border-soft);
+}
+
+.progressFill {
+  height: 6px;
+  border-radius: 3px;
+}
+
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statusPill {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.confidencePill {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  color: var(--color-chambray);
+}
+
+.remarksDetails {
+  border-top: 1px solid var(--color-border-softer);
+  padding-top: 12px;
+}
+
+.remarksSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px dashed var(--color-border-input);
+  border-radius: 8px;
+  background: var(--color-surface-alt);
+  cursor: pointer;
+  list-style: none;
+}
+
+.remarksSummary::-webkit-details-marker {
+  display: none;
+}
+
+.remarksSummary::marker {
+  content: "";
+}
+
+.remarksReadOnly {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.remarksChip {
+  font-size: 12px;
+  color: var(--color-ink);
+}
+
+.remarksCaret {
+  margin-left: auto;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  color: var(--color-faint);
+}
+
+.caretPlus {
+  composes: remarksCaret;
+}
+
+.caretMinus {
+  composes: remarksCaret;
+  display: none;
+}
+
+.remarksDetails[open] .caretPlus {
+  display: none;
+}
+
+.remarksDetails[open] .caretMinus {
+  display: inline;
+}
+
+.remarksBody {
+  border: 1px dashed var(--color-border-input);
+  border-top: none;
+  border-radius: 8px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  background: var(--color-surface-alt);
+  padding: 12px 12px 13px;
+}
+
+.remarkItem {
+  margin-bottom: 10px;
+}
+
+.remarkMeta {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+.remarkText {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.remarksFootnote {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  color: var(--color-faint);
+  letter-spacing: 0.06em;
+}

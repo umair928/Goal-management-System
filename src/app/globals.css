@@ -1,6 +1,7 @@
-@import "tailwindcss";
-
 :root {
+  --font-heading: var(--font-montserrat), Arial, Helvetica, sans-serif;
+  --font-body: Arial, Helvetica, sans-serif;
+
   --color-chambray: #455e7f;
   --color-chambray-hover: #37506e;
   --color-gold: #d7a839;
@@ -34,41 +35,20 @@
   --color-pill-completed-fg: #1e3b2c;
 }
 
-@theme inline {
-  --font-heading: var(--font-montserrat), Arial, Helvetica, sans-serif;
-  --font-body: Arial, Helvetica, sans-serif;
-
-  --color-chambray: var(--color-chambray);
-  --color-chambray-hover: var(--color-chambray-hover);
-  --color-gold: var(--color-gold);
-  --color-surface: var(--color-surface);
-  --color-surface-alt: var(--color-surface-alt);
-  --color-card: var(--color-card);
-  --color-border: var(--color-border);
-  --color-border-soft: var(--color-border-soft);
-  --color-border-softer: var(--color-border-softer);
-  --color-border-input: var(--color-border-input);
-  --color-border-strong: var(--color-border-strong);
-  --color-ink: var(--color-ink);
-  --color-muted: var(--color-muted);
-  --color-faint: var(--color-faint);
-
-  --color-cat-individual: var(--color-cat-individual);
-  --color-cat-team: var(--color-cat-team);
-  --color-cat-organizational: var(--color-cat-organizational);
-
-  --color-status-green: var(--color-status-green);
-  --color-status-amber: var(--color-status-amber);
-  --color-status-red: var(--color-status-red);
-}
-
 html,
 body {
   background: var(--color-surface);
   color: var(--color-ink);
 }
 
+html {
+  height: 100%;
+}
+
 body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -104,19 +84,4 @@ select:focus {
 
 ::placeholder {
   color: var(--color-faint);
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.animate-fade-up {
-  animation: fadeUp 160ms ease-out;
 }

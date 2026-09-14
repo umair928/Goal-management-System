@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import styles from "./nav-tabs.module.css";
 
 export function NavTabs({ tabs }: { tabs: { href: string; label: string }[] }) {
   const pathname = usePathname();
@@ -10,16 +11,14 @@ export function NavTabs({ tabs }: { tabs: { href: string; label: string }[] }) {
   const suffix = q ? `?q=${encodeURIComponent(q)}` : "";
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={styles.row}>
       {tabs.map((t) => {
         const active = pathname === t.href;
         return (
           <Link
             key={t.href}
             href={`${t.href}${suffix}`}
-            className={`px-3 py-[7px] font-heading text-[11px] tracking-[0.04em] rounded-md no-underline ${
-              active ? "bg-chambray text-white" : "bg-transparent text-ink"
-            }`}
+            className={`${styles.tab} ${active ? styles.tabActive : ""}`}
           >
             {t.label}
           </Link>

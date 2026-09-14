@@ -1,0 +1,118 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+  background-color: #eaeef4;
+  background-image: linear-gradient(#dce3ec 1px, transparent 1px), linear-gradient(90deg, #dce3ec 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 392px;
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px;
+  padding: 34px 32px 30px;
+}
+
+.logo {
+  display: block;
+  width: 172px;
+  height: auto;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-chambray);
+  margin-top: 20px;
+}
+
+.tagline {
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin: 14px 0 28px;
+}
+
+.googleButton {
+  width: 100%;
+  padding: 12px;
+  background: var(--color-chambray);
+  color: #ffffff;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.googleButton:hover {
+  background: var(--color-chambray-hover);
+}
+
+.note {
+  font-size: 11px;
+  color: var(--color-faint);
+  line-height: 1.5;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.demoSection {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.demoHeading {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  margin-bottom: 10px;
+}
+
+.demoList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.demoButton {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: var(--color-surface-alt);
+  font-size: 11px;
+  color: var(--color-chambray);
+  cursor: pointer;
+}
+
+.demoFootnote {
+  font-size: 11px;
+  color: var(--color-faint);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+.footer {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  color: var(--color-faint);
+  margin-top: 16px;
+  letter-spacing: 0.04em;
+  text-align: center;
+}

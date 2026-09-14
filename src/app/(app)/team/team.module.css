@@ -1,0 +1,244 @@
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.roster {
+  flex: 2 1 250px;
+  min-width: 0;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.rosterHead {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--color-border-soft);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.rosterEmpty {
+  padding: 16px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.rosterItem {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--color-border-softer);
+  text-decoration: none;
+  color: var(--color-ink);
+}
+
+.rosterAvatar {
+  width: 30px;
+  height: 30px;
+  background: var(--color-border-soft);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-heading);
+  font-size: 10px;
+}
+
+.rosterInfo {
+  min-width: 0;
+}
+
+.rosterName {
+  display: block;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rosterMeta {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  color: var(--color-muted);
+  margin-top: 4px;
+}
+
+.rosterFlag {
+  font-family: var(--font-heading);
+  font-size: 10px;
+}
+
+.detail {
+  flex: 5 1 400px;
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+}
+
+.detailHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.detailTitle {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 19px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.detailMeta {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.emptyState {
+  padding: 18px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--color-muted);
+  background: var(--color-card);
+}
+
+.goalCard {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.goalTop {
+  padding: 18px 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.categoryRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.categoryDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+}
+
+.categoryLabel {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.goalTitle {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.goalDescription {
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+.progressTrack {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-border-soft);
+}
+
+.progressFill {
+  height: 6px;
+  border-radius: 3px;
+}
+
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statusPill {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.confidencePill {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  color: var(--color-chambray);
+}
+
+.remarksBox {
+  border-top: 1px solid var(--color-border-soft);
+  background: var(--color-surface-alt);
+  padding: 16px 20px;
+}
+
+.remarksHead {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 12px;
+}
+
+.remarkItem {
+  border-left: 2px solid var(--color-border);
+  padding: 0 0 0 12px;
+  margin-bottom: 14px;
+}
+
+.remarkMeta {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+.remarkText {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-ink);
+}

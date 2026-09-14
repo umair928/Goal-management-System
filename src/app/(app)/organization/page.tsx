@@ -10,6 +10,7 @@ import type { Category } from "@/generated/prisma/enums";
 import { RoleSelect } from "./role-select";
 import { AuditSearch } from "./audit-search";
 import { UserEditModal } from "./user-edit-modal";
+import styles from "./organization.module.css";
 
 const CATEGORY_ORDER: Category[] = ["INDIVIDUAL", "TEAM", "ORGANIZATIONAL"];
 
@@ -34,15 +35,13 @@ export default async function OrganizationPage({
   ];
 
   return (
-    <div className="max-w-[1180px] mx-auto grid gap-5">
-      <div className="flex items-center gap-px bg-border border border-border rounded-[10px] w-fit">
+    <div className={styles.page}>
+      <div className={styles.tabRow}>
         {tabs.map((t) => (
           <a
             key={t.key}
             href={`/organization?${qParam}&tab=${t.key}`}
-            className={`px-[15px] py-2.5 border-none font-heading text-[11px] tracking-[0.06em] rounded-md no-underline ${
-              tab === t.key ? "bg-chambray text-white" : "bg-card text-ink"
-            }`}
+            className={`${styles.tab} ${tab === t.key ? styles.tabActive : ""}`}
           >
             {t.label}
           </a>
@@ -109,52 +108,45 @@ async function OverviewTab({ quarterId, quarterLabel }: { quarterId: string; qua
   });
 
   return (
-    <div className="grid gap-5">
-      <div className="flex flex-wrap gap-px bg-border border border-border rounded-[10px]">
+    <div className={styles.tabPanel}>
+      <div className={styles.kpiRow}>
         {kpis.map((k) => (
-          <div key={k.label} className="flex-1 basis-[200px] min-w-0 bg-card p-[18px]">
-            <div className="font-heading text-[10px] tracking-[0.12em] uppercase text-muted">{k.label}</div>
-            <div className="font-heading font-semibold text-[32px] tracking-tight mt-2.5" style={{ color: k.color }}>
+          <div key={k.label} className={styles.kpiTile}>
+            <div className={styles.kpiLabel}>{k.label}</div>
+            <div className={styles.kpiValue} style={{ color: k.color }}>
               {k.value}
             </div>
-            <div className="text-[12px] text-muted mt-1">{k.sub}</div>
+            <div className={styles.kpiSub}>{k.sub}</div>
           </div>
         ))}
       </div>
 
-      <section className="bg-card border border-border rounded-[10px] p-5">
-        <div className="flex items-baseline justify-between gap-3.5 flex-wrap mb-[18px]">
-          <div className="font-heading text-[11px] tracking-[0.1em] uppercase">Completion by team and category</div>
-          <div className="flex items-center gap-2 font-heading text-[9px] text-muted tracking-[0.06em]">
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <div className={styles.panelTitle}>Completion by team and category</div>
+          <div className={styles.legend}>
             <span>0%</span>
-            <span
-              className="block w-[90px] h-2 rounded"
-              style={{ background: "linear-gradient(90deg, rgba(69,94,127,0.08), rgba(69,94,127,0.50))" }}
-            />
+            <span className={styles.legendBar} />
             <span>100%</span>
           </div>
         </div>
         {departments.length === 0 ? (
-          <div className="text-[13px] text-muted">No department data yet.</div>
+          <div className={styles.mutedNote}>No department data yet.</div>
         ) : (
-          <div className="grid gap-1.5 items-center" style={{ gridTemplateColumns: `120px repeat(3, minmax(0,1fr))` }}>
+          <div className={styles.heatmapGrid}>
             <div />
             {CATEGORY_ORDER.map((c) => (
-              <div key={c} className="font-heading text-[9px] tracking-[0.1em] uppercase text-muted text-center">
+              <div key={c} className={styles.heatmapColLabel}>
                 {CATEGORY_LABELS[c]}
               </div>
             ))}
             {departments.map((dept) => (
               <Fragment key={dept}>
-                <div className="text-[12px] text-ink truncate pr-2">{dept}</div>
+                <div className={styles.heatmapRowLabel}>{dept}</div>
                 {CATEGORY_ORDER.map((c) => {
                   const cell = cells.find((x) => x.dept === dept && x.category === c)!;
                   return (
-                    <div
-                      key={dept + c}
-                      className="font-heading text-[11px] text-center py-2.5 rounded"
-                      style={{ background: cell.bg, color: cell.fg }}
-                    >
+                    <div key={dept + c} className={styles.heatmapCell} style={{ background: cell.bg, color: cell.fg }}>
                       {cell.text}
                     </div>
                   );
@@ -165,11 +157,11 @@ async function OverviewTab({ quarterId, quarterLabel }: { quarterId: string; qua
         )}
       </section>
 
-      <section className="bg-card border border-border rounded-[10px] p-5">
-        <div className="font-heading text-[11px] tracking-[0.1em] uppercase mb-[18px]">
+      <section className={styles.panel}>
+        <div className={styles.panelTitle} style={{ marginBottom: 18 }}>
           Completion trend · last {trendData.length} quarters
         </div>
-        <svg viewBox="0 0 640 180" preserveAspectRatio="none" className="w-full h-[180px] block">
+        <svg viewBox="0 0 640 180" preserveAspectRatio="none" className={styles.trendChart}>
           <line x1="0" y1="30" x2="640" y2="30" stroke="#E6EBF2" strokeWidth={1} />
           <line x1="0" y1="75" x2="640" y2="75" stroke="#E6EBF2" strokeWidth={1} />
           <line x1="0" y1="120" x2="640" y2="120" stroke="#E6EBF2" strokeWidth={1} />
@@ -179,11 +171,11 @@ async function OverviewTab({ quarterId, quarterLabel }: { quarterId: string; qua
             <circle key={p.label} cx={p.x} cy={p.y} r={4} fill="#455E7F" />
           ))}
         </svg>
-        <div className="grid mt-2.5" style={{ gridTemplateColumns: `repeat(${points.length || 1}, 1fr)` }}>
+        <div className={styles.trendLabels} style={{ gridTemplateColumns: `repeat(${points.length || 1}, 1fr)` }}>
           {points.map((p) => (
-            <div key={p.label} className="text-center">
-              <div className="font-heading text-[11px]">{p.pct}%</div>
-              <div className="font-heading text-[10px] text-muted mt-1">{p.label}</div>
+            <div key={p.label} className={styles.trendLabel}>
+              <div className={styles.trendValue}>{p.pct}%</div>
+              <div className={styles.trendQuarter}>{p.label}</div>
             </div>
           ))}
         </div>
@@ -212,37 +204,32 @@ async function AuditTab({ query }: { query: string }) {
     return "#455E7F";
   };
 
+  const gridCols = "150px 150px minmax(0,1fr) 150px";
+
   return (
-    <section className="bg-card border border-border rounded-[10px]">
-      <div className="flex items-center gap-3 flex-wrap px-[18px] py-3.5 border-b border-border-soft">
-        <div className="font-heading text-[11px] tracking-[0.1em] uppercase">Audit log</div>
+    <section className={styles.panel} style={{ padding: 0 }}>
+      <div className={styles.sectionHeadBar}>
+        <div className={styles.panelTitle}>Audit log</div>
         <AuditSearch defaultValue={query} />
       </div>
-      <div
-        className="grid gap-3.5 px-[18px] py-2.5 border-b border-border font-heading text-[9px] tracking-[0.12em] uppercase text-muted"
-        style={{ gridTemplateColumns: "150px 150px minmax(0,1fr) 150px" }}
-      >
+      <div className={styles.tableHead} style={{ gridTemplateColumns: gridCols }}>
         <div>Actor</div>
         <div>Action</div>
         <div>Entity</div>
-        <div className="text-right">Timestamp</div>
+        <div className={styles.alignRight}>Timestamp</div>
       </div>
-      {filtered.length === 0 && <div className="px-[18px] py-6 text-[13px] text-muted">No matching entries.</div>}
+      {filtered.length === 0 && <div className={styles.emptyRow}>No matching entries.</div>}
       {filtered.map((row) => (
-        <div
-          key={row.id}
-          className="grid gap-3.5 px-[18px] py-2.5 border-b border-border-softer text-[12px] items-baseline"
-          style={{ gridTemplateColumns: "150px 150px minmax(0,1fr) 150px" }}
-        >
+        <div key={row.id} className={styles.tableRow} style={{ gridTemplateColumns: gridCols }}>
           <div>{row.actor?.name ?? row.actor?.email ?? "System"}</div>
-          <div className="font-heading text-[10px] tracking-[0.06em] uppercase" style={{ color: actionColor(row.action) }}>
+          <div className={styles.actionColor} style={{ color: actionColor(row.action) }}>
             {row.action}
           </div>
-          <div className="text-ink min-w-0 truncate">
+          <div className={styles.truncate}>
             {row.entity}
             {row.entityId ? ` · ${row.entityId.slice(0, 8)}` : ""}
           </div>
-          <div className="font-heading text-[10px] text-muted text-right">{formatDateTime(row.createdAt)}</div>
+          <div className={`${styles.mutedSmall} ${styles.alignRight}`}>{formatDateTime(row.createdAt)}</div>
         </div>
       ))}
     </section>
@@ -268,53 +255,43 @@ async function UsersTab({
     .filter((u) => u.id !== editing?.id)
     .map((u) => ({ id: u.id, name: u.name ?? u.email }));
 
+  const gridCols = "minmax(0,1fr) 130px 130px 150px 90px";
+
   return (
-    <section className="bg-card border border-border rounded-[10px]">
-      <div className="px-[18px] py-3.5 border-b border-border-soft flex items-center justify-between gap-3 flex-wrap">
-        <div className="font-heading text-[11px] tracking-[0.1em] uppercase">Manage users</div>
-        <div className="font-heading text-[10px] tracking-[0.06em] px-2.5 py-1.5 rounded-full bg-border-soft text-chambray">
-          {isAdmin ? "Admin — editable" : "Read-only for CEO"}
-        </div>
+    <section className={styles.panel} style={{ padding: 0 }}>
+      <div className={styles.usersHeadBar}>
+        <div className={styles.panelTitle}>Manage users</div>
+        <div className={styles.badge}>{isAdmin ? "Admin — editable" : "Read-only for CEO"}</div>
       </div>
-      <div
-        className="grid gap-3.5 px-[18px] py-2.5 border-b border-border font-heading text-[9px] tracking-[0.12em] uppercase text-muted"
-        style={{ gridTemplateColumns: "minmax(0,1fr) 130px 130px 150px 90px" }}
-      >
+      <div className={styles.tableHead} style={{ gridTemplateColumns: gridCols }}>
         <div>User</div>
         <div>Role</div>
         <div>Team</div>
         <div>Manager</div>
-        <div className="text-right">Actions</div>
+        <div className={styles.alignRight}>Actions</div>
       </div>
       {users.map((u) => (
-        <div
-          key={u.id}
-          className="grid gap-3.5 px-[18px] py-3 border-b border-border-softer text-[13px] items-center"
-          style={{ gridTemplateColumns: "minmax(0,1fr) 130px 130px 150px 90px" }}
-        >
-          <div className="min-w-0">
-            <div className="truncate">{u.name ?? u.email}</div>
-            <div className="font-heading text-[10px] text-muted mt-1 truncate">{u.email}</div>
+        <div key={u.id} className={styles.usersTableRow} style={{ gridTemplateColumns: gridCols }}>
+          <div className={styles.userCellName}>
+            <div className={styles.truncate}>{u.name ?? u.email}</div>
+            <div className={`${styles.userEmail} ${styles.truncate}`}>{u.email}</div>
           </div>
           <div>
             {isAdmin ? (
               <RoleSelect userId={u.id} role={u.role} />
             ) : (
-              <span className="font-heading text-[10px] tracking-[0.06em] uppercase">{ROLE_LABELS[u.role]}</span>
+              <span className={styles.roleStatic}>{ROLE_LABELS[u.role]}</span>
             )}
           </div>
-          <div className="text-[12px] text-muted truncate">{u.department ?? "—"}</div>
-          <div className="text-[12px] text-muted truncate">{u.manager?.name ?? "—"}</div>
-          <div className="text-right">
+          <div className={`${styles.mutedCell} ${styles.truncate}`}>{u.department ?? "—"}</div>
+          <div className={`${styles.mutedCell} ${styles.truncate}`}>{u.manager?.name ?? "—"}</div>
+          <div className={styles.alignRight}>
             {isAdmin ? (
-              <a
-                href={`${closeHref}&edit=${u.id}`}
-                className="px-2.5 py-1.5 border border-border rounded-[10px] bg-surface-alt font-heading text-[10px] no-underline text-chambray"
-              >
+              <a href={`${closeHref}&edit=${u.id}`} className={styles.editLink}>
                 Edit
               </a>
             ) : (
-              <span className="font-heading text-[10px] text-faint">—</span>
+              <span className={styles.noActionCell}>—</span>
             )}
           </div>
         </div>

@@ -1,0 +1,38 @@
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-input);
+  background: var(--color-card);
+  font-size: 13px;
+  border-radius: 6px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.postButton {
+  padding: 8px 14px;
+  background: var(--color-chambray);
+  color: #ffffff;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.postButton:hover:not(:disabled) {
+  background: var(--color-chambray-hover);
+}
+
+.postButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

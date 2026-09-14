@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { Category, GoalStatus } from "@/generated/prisma/enums";
 import { createGoal, updateGoal, type GoalInput, type KeyResultInput } from "./actions";
+import styles from "./goal-modal.module.css";
 
 type Draft = {
   title: string;
@@ -78,31 +79,26 @@ export function GoalModal({
   const disabled = locked || isPending;
 
   return (
-    <div className="fixed inset-0 bg-[rgba(37,50,68,0.45)] grid place-items-center p-6 z-40 overflow-auto" onClick={close}>
-      <div
-        className="w-full max-w-[620px] bg-card border border-border-input animate-fade-up rounded-lg overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between px-[22px] py-4 border-b border-border-soft">
-          <div className="font-heading text-[11px] tracking-[0.1em] uppercase">
-            {mode === "create" ? "New goal" : "Edit goal"}
-          </div>
-          <button onClick={close} className="bg-transparent border-none text-[18px] text-muted cursor-pointer leading-none">
+    <div className={styles.overlay} onClick={close}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.header}>
+          <div className={styles.headerTitle}>{mode === "create" ? "New goal" : "Edit goal"}</div>
+          <button onClick={close} className={styles.closeButton}>
             ×
           </button>
         </div>
 
         {locked && (
-          <div className="flex items-center gap-2.5 px-[22px] py-3 bg-[#FBF3E0] border-b border-[#EFE0BC]">
-            <span className="w-2 h-2 bg-gold" />
-            <span className="text-[13px] text-[#4A3F22]">This quarter is locked.</span>
-            <span className="font-heading text-[10px] text-muted tracking-[0.06em] ml-auto">Read-only</span>
+          <div className={styles.lockedBanner}>
+            <span className={styles.lockedDot} />
+            <span className={styles.lockedText}>This quarter is locked.</span>
+            <span className={styles.lockedTag}>Read-only</span>
           </div>
         )}
 
-        <div className="p-[22px] grid gap-[18px] max-h-[62vh] overflow-auto">
+        <div className={styles.body}>
           <div>
-            <label htmlFor="goal-title" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+            <label htmlFor="goal-title" className={styles.field}>
               Title
             </label>
             <input
@@ -111,12 +107,12 @@ export function GoalModal({
               onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
               disabled={disabled}
               placeholder="What will be true by the end of the quarter?"
-              className="w-full px-3 py-[11px] border border-border-input rounded-md text-[14px]"
+              className={styles.input}
               style={{ background: fieldBg }}
             />
           </div>
           <div>
-            <label htmlFor="goal-description" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+            <label htmlFor="goal-description" className={styles.field}>
               Description
             </label>
             <textarea
@@ -126,13 +122,13 @@ export function GoalModal({
               disabled={disabled}
               rows={3}
               placeholder="Context for you and your manager."
-              className="w-full px-3 py-[11px] border border-border-input rounded-md text-[13px] resize-y font-[inherit]"
+              className={styles.textarea}
               style={{ background: fieldBg }}
             />
           </div>
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+          <div className={styles.twoCol}>
             <div>
-              <label htmlFor="goal-category" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+              <label htmlFor="goal-category" className={styles.field}>
                 Category
               </label>
               <select
@@ -140,7 +136,7 @@ export function GoalModal({
                 value={draft.category}
                 onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value as Category }))}
                 disabled={disabled}
-                className="w-full px-3 py-2.5 border border-border-input rounded-md text-[13px]"
+                className={styles.select}
                 style={{ background: fieldBg }}
               >
                 <option value="INDIVIDUAL">Individual</option>
@@ -149,7 +145,7 @@ export function GoalModal({
               </select>
             </div>
             <div>
-              <label htmlFor="goal-status" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+              <label htmlFor="goal-status" className={styles.field}>
                 Status
               </label>
               <select
@@ -157,7 +153,7 @@ export function GoalModal({
                 value={draft.status}
                 onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as GoalStatus }))}
                 disabled={disabled}
-                className="w-full px-3 py-2.5 border border-border-input rounded-md text-[13px]"
+                className={styles.select}
                 style={{ background: fieldBg }}
               >
                 <option value="NOT_STARTED">Not started</option>
@@ -169,7 +165,7 @@ export function GoalModal({
           </div>
 
           <div>
-            <label htmlFor="goal-confidence" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-2.5">
+            <label htmlFor="goal-confidence" className={styles.fieldSpaced}>
               Confidence score — {draft.confidence}/10
             </label>
             <input
@@ -181,32 +177,30 @@ export function GoalModal({
               value={draft.confidence}
               onChange={(e) => setDraft((d) => ({ ...d, confidence: Number(e.target.value) }))}
               disabled={disabled}
-              className="w-full accent-chambray"
+              className={styles.range}
             />
-            <div className="flex justify-between font-heading text-[9px] text-faint mt-1">
+            <div className={styles.rangeLabels}>
               <span>1 · low</span>
               <span>10 · certain</span>
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <label className="font-heading text-[10px] tracking-[0.12em] uppercase text-muted">Key results</label>
-              <span className="font-heading text-[10px] text-faint">current / target</span>
+            <div className={styles.krHeadRow}>
+              <label className={styles.field} style={{ marginBottom: 0 }}>
+                Key results
+              </label>
+              <span className={styles.krHeadRight}>current / target</span>
             </div>
-            <div className="grid gap-2">
+            <div className={styles.krList}>
               {draft.keyResults.map((kr, i) => (
-                <div
-                  key={i}
-                  className="grid gap-2 items-center"
-                  style={{ gridTemplateColumns: "minmax(0,1fr) 70px 62px 70px 26px" }}
-                >
+                <div key={i} className={styles.krRow}>
                   <input
                     value={kr.description}
                     onChange={(e) => updateKr(i, { description: e.target.value })}
                     disabled={disabled}
                     placeholder="Description"
-                    className="px-2.5 py-2 border border-border-input rounded-md text-[13px] min-w-0"
+                    className={styles.krInput}
                     style={{ background: fieldBg }}
                   />
                   <input
@@ -215,7 +209,7 @@ export function GoalModal({
                     disabled={disabled}
                     type="number"
                     placeholder="Now"
-                    className="px-2 py-2 border border-border-input rounded-md text-[12px] font-heading min-w-0"
+                    className={styles.krInputNumber}
                     style={{ background: fieldBg }}
                   />
                   <input
@@ -223,7 +217,7 @@ export function GoalModal({
                     onChange={(e) => updateKr(i, { unit: e.target.value })}
                     disabled={disabled}
                     placeholder="Unit"
-                    className="px-2 py-2 border border-border-input rounded-md text-[12px] font-heading min-w-0"
+                    className={styles.krInputNumber}
                     style={{ background: fieldBg }}
                   />
                   <input
@@ -232,43 +226,31 @@ export function GoalModal({
                     disabled={disabled}
                     type="number"
                     placeholder="Target"
-                    className="px-2 py-2 border border-border-input rounded-md text-[12px] font-heading min-w-0"
+                    className={styles.krInputNumber}
                     style={{ background: fieldBg }}
                   />
-                  <button
-                    onClick={() => removeKr(i)}
-                    disabled={disabled}
-                    title="Remove"
-                    className="border-none bg-transparent text-faint text-[15px] cursor-pointer"
-                  >
+                  <button onClick={() => removeKr(i)} disabled={disabled} title="Remove" className={styles.krRemove}>
                     ×
                   </button>
                 </div>
               ))}
             </div>
-            <button
-              onClick={addKr}
-              disabled={disabled}
-              className="mt-2.5 px-3 py-2 border border-dashed border-border-input rounded-lg bg-transparent font-heading text-[11px] text-muted cursor-pointer"
-            >
+            <button onClick={addKr} disabled={disabled} className={styles.addKrButton}>
               + Add key result
             </button>
           </div>
 
-          {error && <div className="text-[13px] text-status-red">{error}</div>}
+          {error && <div className={styles.error}>{error}</div>}
         </div>
 
-        <div className="flex justify-end gap-2.5 px-[22px] py-4 border-t border-border-soft bg-surface-alt">
-          <button
-            onClick={close}
-            className="px-4 py-2.5 border border-border-strong rounded-md bg-card font-heading text-[11px] tracking-[0.08em] uppercase cursor-pointer"
-          >
+        <div className={styles.footer}>
+          <button onClick={close} className={styles.cancelButton}>
             Cancel
           </button>
           <button
             onClick={save}
             disabled={disabled}
-            className="px-5 py-2.5 text-white border-none font-heading text-[11px] tracking-[0.08em] uppercase rounded-md"
+            className={styles.saveButton}
             style={{ background: locked ? "#9AA5B4" : "#455E7F", cursor: disabled ? "default" : "pointer" }}
           >
             {isPending ? "Saving…" : "Save goal"}

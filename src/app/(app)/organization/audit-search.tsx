@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import styles from "./audit-search.module.css";
 
 export function AuditSearch({ defaultValue }: { defaultValue: string }) {
   const router = useRouter();
@@ -17,7 +18,7 @@ export function AuditSearch({ defaultValue }: { defaultValue: string }) {
         router.replace(`${pathname}?${params.toString()}`);
       }}
       placeholder="Search actor, action or entity…"
-      className="flex-1 min-w-[200px] px-2.5 py-2 border border-border-strong rounded-md bg-surface-alt text-[13px]"
+      className={styles.input}
     />
   );
 }

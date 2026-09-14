@@ -3,6 +3,7 @@ import { ROLE_LABELS } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { initialsFor } from "@/lib/status";
 import { ProfileForm } from "./profile-form";
+import styles from "./profile.module.css";
 
 export default async function ProfilePage() {
   const session = await requireSession();
@@ -19,35 +20,29 @@ export default async function ProfilePage() {
   ];
 
   return (
-    <div className="max-w-[860px] mx-auto grid gap-5">
-      <div className="flex items-center gap-4">
-        <div className="w-[52px] h-[52px] bg-border-soft rounded-full grid place-items-center font-heading text-[15px] text-chambray">
-          {initialsFor(user.name, user.email)}
-        </div>
+    <div className={styles.page}>
+      <div className={styles.identity}>
+        <div className={styles.avatar}>{initialsFor(user.name, user.email)}</div>
         <div>
-          <h1 className="font-heading font-semibold text-[19px] m-0 tracking-tight">{user.name ?? user.email}</h1>
-          <div className="font-heading text-[10px] tracking-[0.12em] uppercase text-muted mt-1">
-            {ROLE_LABELS[user.role]}
-          </div>
+          <h1 className={styles.name}>{user.name ?? user.email}</h1>
+          <div className={styles.role}>{ROLE_LABELS[user.role]}</div>
         </div>
       </div>
 
-      <section className="bg-card border border-border rounded-[10px]">
-        <div className="px-5 py-3.5 border-b border-border-soft flex items-center justify-between gap-3 flex-wrap">
-          <div className="font-heading text-[11px] tracking-[0.1em] uppercase">Assigned by your administrator</div>
-          <div className="font-heading text-[10px] tracking-[0.06em] px-2.5 py-1.5 rounded-full bg-border-soft text-chambray">
-            Read-only
-          </div>
+      <section className={styles.section}>
+        <div className={styles.sectionHead}>
+          <div className={styles.sectionTitle}>Assigned by your administrator</div>
+          <div className={styles.badge}>Read-only</div>
         </div>
-        <div className="p-5 grid gap-[18px]" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+        <div className={styles.assignedGrid}>
           {assignedFields.map((f) => (
             <div key={f.label}>
-              <div className="font-heading text-[9px] tracking-[0.12em] uppercase text-faint mb-1.5">{f.label}</div>
-              <div className="text-[14px] text-ink">{f.value}</div>
+              <div className={styles.assignedLabel}>{f.label}</div>
+              <div className={styles.assignedValue}>{f.value}</div>
             </div>
           ))}
         </div>
-        <div className="px-5 pb-[18px] text-[12px] text-muted leading-relaxed">
+        <div className={styles.assignedFootnote}>
           Designation, department, manager and access level are set by an administrator. Ask your admin if any of this
           is wrong.
         </div>

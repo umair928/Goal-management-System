@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { updateProfile, type ProfileInput } from "./actions";
+import styles from "./profile-form.module.css";
 
 export function ProfileForm({ initial }: { initial: ProfileInput }) {
   const [draft, setDraft] = useState(initial);
@@ -29,64 +30,56 @@ export function ProfileForm({ initial }: { initial: ProfileInput }) {
     });
   }
 
-  const inputClass = "w-full px-3 py-[11px] border border-border-input bg-surface-alt text-[14px] rounded-md";
-
   return (
-    <section className="bg-card border border-border rounded-[10px]">
-      <div className="px-5 py-3.5 border-b border-border-soft font-heading text-[11px] tracking-[0.1em] uppercase">
-        Your details
-      </div>
-      <div className="p-5 grid gap-[18px]">
-        <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+    <section className={styles.section}>
+      <div className={styles.sectionHead}>Your details</div>
+      <div className={styles.body}>
+        <div className={styles.grid}>
           <div>
-            <label htmlFor="profile-preferredName" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+            <label htmlFor="profile-preferredName" className={styles.field}>
               Preferred name
             </label>
-            <input {...field("preferredName")} className={inputClass} />
+            <input {...field("preferredName")} className={styles.input} />
           </div>
           <div>
-            <label htmlFor="profile-pronouns" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+            <label htmlFor="profile-pronouns" className={styles.field}>
               Pronouns
             </label>
-            <input {...field("pronouns")} className={inputClass} />
+            <input {...field("pronouns")} className={styles.input} />
           </div>
           <div>
-            <label htmlFor="profile-location" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+            <label htmlFor="profile-location" className={styles.field}>
               Location
             </label>
-            <input {...field("location")} className={inputClass} />
+            <input {...field("location")} className={styles.input} />
           </div>
           <div>
-            <label htmlFor="profile-phone" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+            <label htmlFor="profile-phone" className={styles.field}>
               Contact number
             </label>
-            <input {...field("phone")} className={inputClass} />
+            <input {...field("phone")} className={styles.input} />
           </div>
         </div>
         <div>
-          <label htmlFor="profile-about" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+          <label htmlFor="profile-about" className={styles.field}>
             What you work on
           </label>
           <textarea
             {...field("about")}
             rows={3}
             placeholder="A short description of your responsibilities this quarter."
-            className={`${inputClass} resize-y font-[inherit] leading-relaxed`}
+            className={styles.textarea}
           />
         </div>
         <div>
-          <label htmlFor="profile-skills" className="block font-heading text-[10px] tracking-[0.12em] uppercase text-muted mb-1.5">
+          <label htmlFor="profile-skills" className={styles.field}>
             Skills
           </label>
-          <input {...field("skills")} placeholder="Comma separated" className={inputClass} />
+          <input {...field("skills")} placeholder="Comma separated" className={styles.input} />
         </div>
-        <div className="flex justify-end items-center gap-3">
-          {saved && !isPending && <span className="text-[12px] text-status-green">Saved</span>}
-          <button
-            onClick={save}
-            disabled={isPending}
-            className="px-5 py-2.5 bg-chambray hover:bg-chambray-hover text-white border-none font-heading text-[11px] tracking-[0.08em] uppercase rounded-md cursor-pointer"
-          >
+        <div className={styles.footer}>
+          {saved && !isPending && <span className={styles.savedNote}>Saved</span>}
+          <button onClick={save} disabled={isPending} className={styles.saveButton}>
             {isPending ? "Saving…" : "Save my details"}
           </button>
         </div>

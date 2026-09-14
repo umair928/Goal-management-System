@@ -5,6 +5,7 @@ import { useTransition } from "react";
 import type { Role } from "@/generated/prisma/enums";
 import { ROLE_LABELS } from "@/lib/roles";
 import { updateUserRole } from "./actions";
+import styles from "./role-select.module.css";
 
 const ROLES: Role[] = ["EMPLOYEE", "MANAGER", "CEO", "ADMIN"];
 
@@ -23,7 +24,7 @@ export function RoleSelect({ userId, role }: { userId: string; role: Role }) {
           router.refresh();
         });
       }}
-      className="w-full px-2.5 py-1.5 border border-border-strong bg-surface-alt text-[12px] rounded-md"
+      className={styles.select}
     >
       {ROLES.map((r) => (
         <option key={r} value={r}>
